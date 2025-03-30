@@ -85,6 +85,135 @@ gotask/
 ├── package.json       # Dependencies and scripts
 └── vite.config.js     # Vite configuration
 ```
+## Initial Project Setup
+
+### Prerequisites
+- Node.js 18+ and npm installed
+
+### Creating a New Project from Scratch
+
+1. Create a Vite React project:
+   ```bash
+   npm create vite@latest gotask -- --template react
+   cd gotask
+   ```
+
+2. Install Material UI dependencies:
+   ```bash
+   npm install @mui/material @mui/icons-material @emotion/react @emotion/styled
+   ```
+
+3. Install Redux Toolkit and React-Redux:
+   ```bash
+   npm install @reduxjs/toolkit react-redux
+   ```
+
+4. Install React Router for navigation:
+   ```bash
+   npm install react-router-dom
+   ```
+
+5. Install date-fns for date handling:
+   ```bash
+   npm install date-fns
+   ```
+
+6. Create basic project structure:
+   ```bash
+   mkdir -p src/components src/store
+   ```
+
+7. Set up Redux store by creating store files:
+   ```bash
+   touch src/store/store.js src/store/taskSlice.js
+   ```
+
+8. Create component files:
+   ```bash
+   touch src/components/Layout.jsx
+   touch src/components/TaskList.jsx
+   touch src/components/TaskForm.jsx
+   touch src/components/Board.jsx
+   touch src/components/Settings.jsx
+   ```
+
+## Installation & Setup
+
+### Getting Started with Existing Repository
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/mahilsonowal/GoTask.git
+   cd GoTask
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
+   This will launch the application at http://localhost:5173
+
+### Building for Production
+
+4. Create a production build:
+   ```bash
+   npm run build
+   ```
+   This generates optimized files in the `dist` directory
+
+5. Preview the production build locally:
+   ```bash
+   npm run preview
+   ```
+
+## Deployment
+
+### Netlify Deployment
+
+1. Create an account on Netlify if you don't have one
+2. Connect your GitHub repository to Vercel
+3. Configure build settings:
+   - Build Command: `npm run build`
+   - Output Directory: `dist`
+   - Install Command: `npm install`
+4. Deploy and access your live application
+
+### GitHub Pages Deployment
+
+1. Install the GitHub Pages package:
+   ```bash
+   npm install --save-dev gh-pages
+   ```
+
+2. Add these lines to your `package.json`:
+   ```json
+   "homepage": "https://mahilsonowal.github.io/GoTask",
+   "scripts": {
+     "predeploy": "npm run build",
+     "deploy": "gh-pages -d dist"
+   }
+   ```
+
+3. Update your `vite.config.js` to include the base path:
+   ```javascript
+   export default defineConfig({
+     base: '/GoTask/',
+     // other configuration...
+   })
+   ```
+
+4. Deploy to GitHub Pages:
+   ```bash
+   npm run deploy
+   ```
+
+5. Application will be available at https://mahilsonowal.github.io/GoTask and https://go-task-dusky.vercel.app/
+
 
 ## Screenshots
 
