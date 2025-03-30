@@ -93,7 +93,6 @@ Add screenshots of your application here to showcase its features. Take screensh
 - Main task list view
 - Board management view
 - Task creation/editing form 
-- Filtering and search interface
 - Mobile responsive views
 
 
