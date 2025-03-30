@@ -181,7 +181,7 @@ gotask/
    - Build Command: `npm run build`
    - Output Directory: `dist`
    - Install Command: `npm install`
-4. Deploy and access your live application
+4. Deploy and access the live application  https://go-task-dusky.vercel.app/
 
 ### GitHub Pages Deployment
 
@@ -212,7 +212,7 @@ gotask/
    npm run deploy
    ```
 
-5. Application will be available at https://mahilsonowal.github.io/GoTask and https://go-task-dusky.vercel.app/
+5. Application will be available at https://mahilsonowal.github.io/GoTask 
 
 
 ## Screenshots
