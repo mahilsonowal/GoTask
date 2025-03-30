@@ -105,7 +105,7 @@ Add screenshots of your application here to showcase its features. Take screensh
 ![Task Creation](/screenshots/task-form.png)
 *Task creation form with priority, date and board selection*
 
-![Mobile View](/screenshot/mobileview.jpg).
+![Mobile View](screenshots/mobileview.jpg).
 *Mobile UI*
 ```
 
