@@ -9,7 +9,7 @@
 
 A modern task management application built with React and Material UI that helps you organize tasks across custom boards, track progress, and boost productivity.
 
-## 🌟 Features
+##  Features
 
 - **Task Management**: Create, edit, and delete tasks with titles, descriptions, start/due dates, and priority levels
 - **Board Organization**: Group tasks into customizable boards with colors for better visual organization
@@ -33,12 +33,12 @@ A modern task management application built with React and Material UI that helps
 - **Build Tool**: Vite
 - **Styling**: Emotion (MUI's styling solution)
 
-## 📋 Prerequisites
+##  Prerequisites
 
 - Node.js 18+ and npm
 
 
-## 📱 Usage Guide
+##  Usage Guide
 
 ### Task Management
 
@@ -67,7 +67,7 @@ A modern task management application built with React and Material UI that helps
 - **Subtasks**: Create and manage subtasks for more complex to-dos
 - **Progress Tracking**: Monitor task and board completion with progress bars
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 gotask/
@@ -88,7 +88,7 @@ gotask/
 └── vite.config.js     # Vite configuration
 ```
 
-## 🖼️ Screenshots
+## Screenshots
 
 Add screenshots of your application here to showcase its features. Take screenshots of:
 
@@ -109,7 +109,7 @@ Add screenshots of your application here to showcase its features. Take screensh
 *Task creation form with priority, date and board selection*
 ```
 
-## 🔍 Key App Features
+## Key App Features
 
 ### Task Organization
 Tasks can be organized into custom boards. Each board has its own color theme, making it easy to visually distinguish between different categories of tasks.
@@ -125,7 +125,7 @@ The application is fully responsive, working seamlessly across desktop, tablet, 
 
 
 
-## 👤 Author
+##  Author
 
 Mahil Sonowal
 
