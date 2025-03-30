@@ -4,7 +4,7 @@
 # GoTask 3.0
 
 <p align="center">
-  <img src="public/logo.png" alt="GoTask Logo" width="120" height="120" />
+  <img src="public/logo.svg" alt="GoTask Logo" width="120" height="120" />
 </p>
 
 A modern task management application built with React and Material UI that helps you organize tasks across custom boards, track progress, and boost productivity.
