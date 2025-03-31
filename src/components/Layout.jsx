@@ -73,6 +73,10 @@ function Layout({ children }) {
     setSearchQuery('');
   };
 
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
   const getBoardName = (boardId) => {
     const board = boards.find(b => b.id === boardId);
     return board ? board.name : 'Unknown Board';
@@ -235,7 +239,7 @@ function Layout({ children }) {
           boxShadow: 2,
         }}
       >
-        <Toolbar sx={{ justifyContent: 'space-between' }}>
+        <Toolbar sx={{ justifyContent: 'space-between', gap: 2 }}>
           <IconButton
             color="inherit"
             aria-label="open drawer"
@@ -246,155 +250,129 @@ function Layout({ children }) {
             <MenuIcon />
           </IconButton>
           
-          <Typography
-            variant="h6"
-            noWrap
-            component="div"
-            sx={{
-              fontSize: isMobile ? '1.25rem' : '1.5rem',
-              fontWeight: 600,
-              color: theme.palette.text.primary,
-              display: { xs: 'none', sm: 'block' },
-            }}
-          >
-            {menuItems.find(item => isActive(item.path))?.text || 'Dashboard'}
-          </Typography>
-          
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Tooltip title="Search">
-              <IconButton sx={{ mx: 1 }} onClick={handleSearchOpen}>
-                <SearchIcon />
-              </IconButton>
-            </Tooltip>
-            
+          <Box sx={{ display: 'flex', alignItems: 'center', flex: 1, gap: 2 }}>
+            <Typography
+              variant="h6"
+              noWrap
+              component="div"
+              sx={{ display: { xs: 'none', sm: 'block' } }}
+            >
+              {menuItems.find(item => isActive(item.path))?.text || 'GoTask'}
+            </Typography>
+
+            <Box sx={{ position: 'relative', flex: 1, maxWidth: { xs: '100%', sm: 400 } }}>
+              <TextField
+                fullWidth
+                size="small"
+                placeholder="Search tasks..."
+                value={searchQuery}
+                onChange={handleSearchChange}
+                onFocus={handleSearchOpen}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon />
+                    </InputAdornment>
+                  ),
+                  endAdornment: searchQuery && (
+                    <InputAdornment position="end">
+                      <IconButton size="small" onClick={handleSearchClose}>
+                        <CloseIcon />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    backgroundColor: 'background.paper',
+                    '&:hover': {
+                      backgroundColor: 'action.hover',
+                    },
+                  },
+                }}
+              />
+              
+              {searchOpen && searchQuery && (
+                <Paper
+                  sx={{
+                    position: 'absolute',
+                    top: '100%',
+                    left: 0,
+                    right: 0,
+                    mt: 1,
+                    maxHeight: 400,
+                    overflow: 'auto',
+                    zIndex: 1300,
+                    boxShadow: 3,
+                  }}
+                >
+                  <List>
+                    {filteredTasks.length > 0 ? (
+                      filteredTasks.map((task) => (
+                        <ListItemButton
+                          key={task.id}
+                          onClick={() => handleTaskClick(task.id)}
+                          sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'flex-start',
+                            gap: 0.5,
+                          }}
+                        >
+                          <Box sx={{ display: 'flex', alignItems: 'center', width: '100%', gap: 1 }}>
+                            <Typography variant="subtitle1" sx={{ flex: 1 }}>
+                              {task.title}
+                            </Typography>
+                            <Chip
+                              size="small"
+                              label={getBoardName(task.board)}
+                              color={getSelectedBoardColor(task.board)}
+                              sx={{ ml: 1 }}
+                            />
+                          </Box>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <Chip
+                              size="small"
+                              label={task.priority}
+                              color={getPriorityColor(task.priority)}
+                            />
+                            {task.dueDate && (
+                              <Typography variant="caption" color="text.secondary">
+                                Due: {format(parseISO(task.dueDate), 'MMM d, yyyy')}
+                              </Typography>
+                            )}
+                          </Box>
+                        </ListItemButton>
+                      ))
+                    ) : (
+                      <ListItem>
+                        <ListItemText primary="No tasks found" />
+                      </ListItem>
+                    )}
+                  </List>
+                </Paper>
+              )}
+            </Box>
+          </Box>
+
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Tooltip title="Notifications">
-              <IconButton sx={{ mx: 1 }}>
-                <Badge badgeContent={3} color="error">
+              <IconButton color="inherit">
+                <Badge badgeContent={4} color="error">
                   <NotificationsIcon />
                 </Badge>
               </IconButton>
             </Tooltip>
-            
-            <Box 
-              sx={{ 
-                display: { xs: 'none', sm: 'block' },
-                ml: 2, 
-              }}
-            >
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => navigate('/task/new')}
-                sx={{
-                  px: isMobile ? 2 : 3,
-                  py: isMobile ? 0.5 : 1,
-                  borderRadius: '10px',
-                  boxShadow: '0px 4px 10px rgba(108, 99, 255, 0.3)',
-                  fontSize: isMobile ? '0.8rem' : 'inherit',
-                }}
-              >
-                New Task
-              </Button>
-            </Box>
+            <Tooltip title="Profile">
+              <IconButton color="inherit">
+                <Avatar sx={{ width: 32, height: 32, bgcolor: theme.palette.primary.main }}>
+                  M
+                </Avatar>
+              </IconButton>
+            </Tooltip>
           </Box>
         </Toolbar>
       </AppBar>
-      
-      {/* Search Dialog */}
-      <Dialog 
-        open={searchOpen} 
-        onClose={handleSearchClose} 
-        fullWidth 
-        maxWidth="sm"
-        PaperProps={{
-          sx: { 
-            borderRadius: '12px',
-            maxHeight: '80vh'
-          }
-        }}
-      >
-        <DialogContent sx={{ p: 2 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-            <TextField
-              autoFocus
-              fullWidth
-              placeholder="Search tasks..."
-              variant="outlined"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon color="action" />
-                  </InputAdornment>
-                ),
-                sx: { 
-                  borderRadius: '10px',
-                  backgroundColor: theme.palette.background.default
-                }
-              }}
-            />
-            <IconButton onClick={handleSearchClose} sx={{ ml: 1 }}>
-              <CloseIcon />
-            </IconButton>
-          </Box>
-          
-          {searchQuery && (
-            <Box>
-              {filteredTasks.length > 0 ? (
-                <List>
-                  {filteredTasks.map(task => (
-                    <Paper 
-                      key={task.id} 
-                      elevation={1} 
-                      sx={{ 
-                        mb: 1, 
-                        borderRadius: '8px',
-                        overflow: 'hidden'
-                      }}
-                    >
-                      <ListItemButton 
-                        onClick={() => handleTaskClick(task.id)}
-                        sx={{ 
-                          p: 2,
-                          borderLeft: `4px solid ${getPriorityColor(task.priority)}`
-                        }}
-                      >
-                        <ListItemText
-                          primary={task.title}
-                          secondary={
-                            <Box sx={{ display: 'flex', alignItems: 'center', mt: 0.5 }}>
-                              <Chip 
-                                size="small" 
-                                label={getBoardName(task.board)}
-                                sx={{ mr: 1 }}
-                              />
-                              {task.completed && (
-                                <Chip 
-                                  size="small" 
-                                  label="Completed"
-                                  color="success"
-                                  variant="outlined"
-                                />
-                              )}
-                            </Box>
-                          }
-                        />
-                      </ListItemButton>
-                    </Paper>
-                  ))}
-                </List>
-              ) : (
-                <Box sx={{ textAlign: 'center', py: 5 }}>
-                  <Typography variant="body1" color="text.secondary">
-                    No tasks found matching "{searchQuery}"
-                  </Typography>
-                </Box>
-              )}
-            </Box>
-          )}
-        </DialogContent>
-      </Dialog>
       
       <Box
         component="nav"
