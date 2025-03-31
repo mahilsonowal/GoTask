@@ -253,317 +253,180 @@ function Board() {
   };
 
   return (
-    <Box>
-      <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', mb: 4, gap: 2 }}>
-        <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          onClick={() => handleOpen()}
-          sx={{ 
-            alignSelf: { xs: 'stretch', sm: 'flex-start' },
-            height: { sm: '40px' }
-          }}
-        >
-          Add Board
-        </Button>
-      </Box>
-
-      <Box sx={{ mb: 4 }}>
-        <TextField
-          fullWidth
-          placeholder="Search boards..."
-          variant="outlined"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon color="action" />
-              </InputAdornment>
-            ),
-          }}
-          sx={{ 
-            maxWidth: '400px',
-            '& .MuiOutlinedInput-root': {
-              borderRadius: '12px',
-            }
-          }}
-        />
-      </Box>
-
-      {filteredBoards.length === 0 ? (
-        <Paper
-          elevation={2}
-          sx={{
-            p: 5,
-            textAlign: 'center',
-            borderRadius: '16px',
-          }}
-        >
-          <Box
+    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', gap: 3 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
+        <Typography variant="h5" component="h1" sx={{ fontWeight: 600 }}>
+          Boards
+        </Typography>
+        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+          <TextField
+            size="small"
+            placeholder="Search boards..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            }}
+            sx={{ width: { xs: '100%', sm: 250 } }}
+          />
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={() => handleOpen()}
             sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: 2,
+              display: { xs: 'none', sm: 'flex' },
+              borderRadius: 2,
+              boxShadow: '0px 4px 10px rgba(108, 99, 255, 0.3)',
             }}
           >
-            <Avatar
+            New Board
+          </Button>
+        </Box>
+      </Box>
+
+      <Grid container spacing={3} sx={{ flex: 1, overflow: 'auto' }}>
+        {filteredBoards.map((board) => (
+          <Grid item xs={12} sm={6} md={4} key={board.id}>
+            <Card
               sx={{
-                bgcolor: 'rgba(108, 99, 255, 0.1)',
-                width: 80,
-                height: 80,
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                borderRadius: 2,
+                boxShadow: 2,
+                '&:hover': {
+                  boxShadow: 4,
+                },
+                transition: 'all 0.2s',
               }}
             >
-              <ListIcon sx={{ fontSize: 40, color: theme.palette.primary.main }} />
-            </Avatar>
-            <Typography variant="h6">No matching boards found</Typography>
-            <Typography variant="body1" color="text.secondary">
-              {search
-                ? `No boards matching "${search}"`
-                : "You haven't created any boards yet"}
-            </Typography>
-            <Button
-              variant="contained"
-              startIcon={<AddIcon />}
-              onClick={() => handleOpen()}
-              sx={{ mt: 2 }}
-            >
-              Create Your First Board
-            </Button>
-          </Box>
-        </Paper>
-      ) : (
-        <Grid container spacing={3}>
-          {filteredBoards.map((board) => (
-            <Grid key={board.id} xs={12} sm={6} md={4}>
-              <Card sx={{ borderRadius: 3, height: '100%' }}>
-                <CardContent sx={{ p: 0, height: '100%' }}>
-                  <Box sx={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    p: 3, 
-                    backgroundColor: `${theme.palette[board.color].main}08`,
-                  }}>
-                    <Avatar 
-                      sx={{ 
-                        bgcolor: theme.palette[board.color].main,
-                        width: 48,
-                        height: 48,
-                        mr: 2
+              <CardContent sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 2 }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Box
+                      sx={{
+                        width: 12,
+                        height: 12,
+                        borderRadius: '50%',
+                        bgcolor: `${board.color}.main`,
                       }}
-                    >
-                      <ColorLensIcon />
-                    </Avatar>
-                    <Box sx={{ flexGrow: 1 }}>
-                      <Typography variant="h6" fontWeight={600}>
-                        {board.name}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {getTaskCount(board.id)} tasks
-                      </Typography>
-                    </Box>
-                    <Box>
-                      <Tooltip title="Add Task">
-                        <IconButton
-                          onClick={(e) => handleAddTaskClick(e, board)}
-                          sx={{ 
-                            color: theme.palette[board.color].main,
-                            backgroundColor: `${theme.palette[board.color].main}15`,
-                            mr: 1,
-                            '&:hover': {
-                              backgroundColor: `${theme.palette[board.color].main}25`,
-                            }
-                          }}
-                        >
-                          <AddTaskIcon />
-                        </IconButton>
-                      </Tooltip>
-                      <Box sx={{ display: 'inline-block' }}>
-                        <Tooltip title="Board Options">
-                          <IconButton
-                            size="small" 
-                            sx={{ 
-                              color: 'text.secondary',
-                              '&:hover': {
-                                backgroundColor: 'rgba(0, 0, 0, 0.04)',
-                              }
-                            }}
-                            onClick={(e) => {
-                              setAnchorEl(e.currentTarget);
-                              setSelectedBoard(board);
-                            }}
-                          >
-                            <MoreIcon />
-                          </IconButton>
-                        </Tooltip>
-                      </Box>
-                    </Box>
+                    />
+                    <Typography variant="h6" component="h2" sx={{ fontWeight: 600 }}>
+                      {board.name}
+                    </Typography>
                   </Box>
-                  
-                  <Divider />
-                  
-                  <Box sx={{ p: 3 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                      <Box sx={{ position: 'relative', mr: 2 }}>
-                        <CircularProgress
-                          variant="determinate"
-                          value={getProgress(board.id)}
-                          size={50}
-                          thickness={5}
-                          sx={{
-                            color: theme.palette[board.color].main,
-                            opacity: 0.8,
-                          }}
-                        />
-                        <Box
-                          sx={{
-                            position: 'absolute',
-                            top: 0,
-                            left: 0,
-                            bottom: 0,
-                            right: 0,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                          }}
-                        >
-                          <Typography
-                            variant="caption"
-                            component="div"
-                            fontWeight={600}
-                            sx={{ fontSize: '0.8rem' }}
-                          >
-                            {getProgress(board.id)}%
-                          </Typography>
-                        </Box>
-                      </Box>
-                      <Box>
-                        <Typography variant="body2" fontWeight={500}>
-                          {getCompletedTaskCount(board.id)} / {getTaskCount(board.id)} tasks completed
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary">
-                          {getTaskCount(board.id) === 0 
-                            ? "Add a task to get started" 
-                            : getProgress(board.id) === 100 
-                              ? "All tasks completed!" 
-                              : "Keep going!"}
-                        </Typography>
-                      </Box>
-                    </Box>
-                    
-                    {getTasksInBoard(board.id).length > 0 && (
-                      <List sx={{ py: 0 }}>
-                        {getTasksInBoard(board.id).slice(0, 3).map((task) => (
-                          <ListItem 
-                            key={task.id} 
-                            disableGutters
-                            sx={{ 
-                              px: 0, 
-                              py: 1,
-                              borderLeft: task.completed ? `3px solid ${theme.palette.success.main}` : 'none',
-                              pl: task.completed ? 1.5 : 0,
-                              cursor: 'pointer',
-                              '&:hover': {
-                                backgroundColor: 'rgba(0, 0, 0, 0.02)',
-                              },
-                              position: 'relative',
-                              pr: 7, // Make room for the buttons
-                            }}
-                            onClick={() => handleEditTask(task.id)}
-                          >
-                            <ListItemIcon sx={{ minWidth: 36 }}>
-                              <IconButton 
-                                size="small" 
-                                edge="start"
-                                onClick={(e) => handleToggleTaskComplete(task.id, e)}
-                                sx={{ p: 0 }}
-                              >
-                                {task.completed ? (
-                                  <CheckCircleIcon 
-                                    fontSize="small"
-                                    color="success"
-                                  />
-                                ) : (
-                                  <CheckIcon 
-                                    fontSize="small" 
-                                    sx={{ color: 'transparent', border: '1px solid', borderColor: 'divider', borderRadius: '50%' }}
-                                  />
-                                )}
-                              </IconButton>
-                            </ListItemIcon>
-                            <ListItemText 
-                              primary={task.title}
-                              primaryTypographyProps={{
-                                fontSize: '0.875rem',
-                                fontWeight: 500,
-                                textDecoration: task.completed ? 'line-through' : 'none',
-                                color: task.completed ? theme.palette.text.secondary : theme.palette.text.primary,
-                                noWrap: true,
-                              }}
-                            />
-                            <ListItemSecondaryAction>
-                              <Tooltip title="Edit Task">
-                                <IconButton 
-                                  edge="end" 
-                                  size="small"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleEditTask(task.id);
-                                  }}
-                                  sx={{ 
-                                    fontSize: 'small',
-                                    color: theme.palette.text.secondary,
-                                    mr: 0.5,
-                                  }}
-                                >
-                                  <EditIcon fontSize="small" />
-                                </IconButton>
-                              </Tooltip>
-                              <Tooltip title="Delete Task">
-                                <IconButton 
-                                  edge="end" 
-                                  size="small"
-                                  onClick={(e) => handleDeleteTask(task.id, e)}
-                                  sx={{ 
-                                    fontSize: 'small',
-                                    color: theme.palette.text.secondary,
-                                  }}
-                                >
-                                  <DeleteIcon fontSize="small" />
-                                </IconButton>
-                              </Tooltip>
-                            </ListItemSecondaryAction>
-                          </ListItem>
-                        ))}
-                        
-                        {getTasksInBoard(board.id).length > 3 && (
-                          <Button
-                            fullWidth
-                            variant="text"
-                            size="small"
-                            onClick={() => navigate('/', { state: { board: board.id } })}
-                            sx={{ 
-                              mt: 1, 
-                              textTransform: 'none',
-                              color: theme.palette[board.color].main,
-                              '&:hover': {
-                                backgroundColor: `${theme.palette[board.color].main}10`,
-                              }
-                            }}
-                          >
-                            Show all {getTasksInBoard(board.id).length} tasks
-                          </Button>
-                        )}
-                      </List>
+                  <Box>
+                    <IconButton
+                      size="small"
+                      onClick={(e) => handleAddTaskClick(e, board)}
+                      sx={{ color: 'text.secondary', mr: 0.5 }}
+                    >
+                      <AddTaskIcon />
+                    </IconButton>
+                    {board.name !== 'Home' && (
+                      <IconButton
+                        size="small"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setAnchorEl(e.currentTarget);
+                          setSelectedBoard(board);
+                        }}
+                        sx={{ color: 'text.secondary' }}
+                      >
+                        <MoreIcon />
+                      </IconButton>
                     )}
                   </Box>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-      )}
+                </Box>
+
+                <Box sx={{ flex: 1 }}>
+                  <List sx={{ p: 0 }}>
+                    {getTasksInBoard(board.id).slice(0, 3).map((task) => (
+                      <ListItem
+                        key={task.id}
+                        onClick={() => handleEditTask(task.id)}
+                        sx={{
+                          p: 1,
+                          borderRadius: 1,
+                          cursor: 'pointer',
+                          '&:hover': {
+                            bgcolor: 'action.hover',
+                          },
+                        }}
+                      >
+                        <ListItemIcon sx={{ minWidth: 36 }}>
+                          <CheckCircleIcon
+                            color={task.completed ? 'success' : 'disabled'}
+                            onClick={(e) => handleToggleTaskComplete(task.id, e)}
+                            sx={{ cursor: 'pointer' }}
+                          />
+                        </ListItemIcon>
+                        <ListItemText
+                          primary={task.title}
+                          primaryTypographyProps={{
+                            sx: {
+                              textDecoration: task.completed ? 'line-through' : 'none',
+                              color: task.completed ? 'text.secondary' : 'text.primary',
+                            },
+                          }}
+                        />
+                        <IconButton
+                          size="small"
+                          onClick={(e) => handleDeleteTask(task.id, e)}
+                          sx={{ color: 'text.secondary' }}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </ListItem>
+                    ))}
+                    {getTasksInBoard(board.id).length > 3 && (
+                      <ListItem>
+                        <ListItemText
+                          primary={`+${getTasksInBoard(board.id).length - 3} more tasks`}
+                          primaryTypographyProps={{ color: 'text.secondary' }}
+                        />
+                      </ListItem>
+                    )}
+                  </List>
+                </Box>
+
+                <Box sx={{ mt: 'auto' }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                    <Typography variant="body2" color="text.secondary">
+                      Progress
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {getCompletedTaskCount(board.id)}/{getTaskCount(board.id)}
+                    </Typography>
+                  </Box>
+                  <Box
+                    sx={{
+                      width: '100%',
+                      height: 6,
+                      bgcolor: 'action.hover',
+                      borderRadius: 3,
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        width: `${getProgress(board.id)}%`,
+                        height: '100%',
+                        bgcolor: `${board.color}.main`,
+                        transition: 'width 0.3s ease',
+                      }}
+                    />
+                  </Box>
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
 
       <Menu
         anchorEl={anchorEl}
@@ -571,14 +434,17 @@ function Board() {
         onClose={handleAddTaskClose}
         PaperProps={{
           sx: {
+            mt: 1,
             borderRadius: 2,
-            minWidth: 180,
-            boxShadow: '0px 5px 15px rgba(0, 0, 0, 0.15)',
-          }
+            boxShadow: 3,
+          },
         }}
       >
-        <MenuItem onClick={handleCreateTask} sx={{ py: 1.5 }}>
-          <AddTaskIcon sx={{ mr: 1.5, fontSize: 20 }} /> New Task
+        <MenuItem onClick={handleCreateTask}>
+          <ListItemIcon>
+            <AddTaskIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>Add New Task</ListItemText>
         </MenuItem>
         {selectedBoard && selectedBoard.name !== 'Home' && (
           <>
@@ -586,37 +452,41 @@ function Board() {
             <MenuItem onClick={() => {
               handleAddTaskClose();
               handleOpen(selectedBoard);
-            }} sx={{ py: 1.5 }}>
-              <EditIcon sx={{ mr: 1.5, fontSize: 20 }} /> Edit Board
+            }}>
+              <ListItemIcon>
+                <EditIcon fontSize="small" />
+              </ListItemIcon>
+              <ListItemText>Edit Board</ListItemText>
             </MenuItem>
             <MenuItem onClick={() => {
               handleAddTaskClose();
               handleDeleteClick(selectedBoard);
-            }} sx={{ color: theme.palette.error.main, py: 1.5 }}>
-              <DeleteIcon sx={{ mr: 1.5, fontSize: 20 }} /> Delete Board
+            }} sx={{ color: 'error.main' }}>
+              <ListItemIcon>
+                <DeleteIcon fontSize="small" />
+              </ListItemIcon>
+              <ListItemText>Delete Board</ListItemText>
             </MenuItem>
           </>
         )}
       </Menu>
 
-      <Dialog 
-        open={open} 
-        onClose={handleClose} 
-        maxWidth="sm" 
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        maxWidth="sm"
         fullWidth
         PaperProps={{
           sx: {
-            borderRadius: 3,
-          }
+            borderRadius: 2,
+          },
         }}
       >
-        <DialogTitle sx={{ pb: 1 }}>
-          <Typography variant="h5" fontWeight={600}>
-            {editingBoard ? 'Edit Board' : 'New Board'}
-          </Typography>
+        <DialogTitle>
+          {editingBoard ? 'Edit Board' : 'Create New Board'}
         </DialogTitle>
         <form onSubmit={handleSubmit}>
-          <DialogContent sx={{ pb: 1 }}>
+          <DialogContent>
             <Stack spacing={3}>
               <TextField
                 autoFocus
@@ -630,7 +500,7 @@ function Board() {
                 InputProps={{
                   sx: {
                     borderRadius: 2,
-                  }
+                  },
                 }}
               />
               
@@ -641,6 +511,7 @@ function Board() {
                   name="color"
                   value={formData.color}
                   onChange={(e) => setFormData({ ...formData, color: e.target.value })}
+                  sx={{ flexWrap: 'wrap', gap: 2 }}
                 >
                   {colorOptions.map((option) => (
                     <FormControlLabel
@@ -672,26 +543,28 @@ function Board() {
                     />
                   ))}
                 </RadioGroup>
-                {errors.color && (
-                  <Typography color="error" variant="caption">
-                    {errors.color}
-                  </Typography>
-                )}
               </FormControl>
             </Stack>
           </DialogContent>
           <DialogActions sx={{ px: 3, pb: 3 }}>
-            <Button 
+            <Button
               onClick={handleClose}
               variant="outlined"
-              sx={{ borderRadius: 2 }}
+              sx={{ 
+                borderRadius: 2,
+                px: 3,
+              }}
             >
               Cancel
             </Button>
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               variant="contained"
-              sx={{ borderRadius: 2 }}
+              sx={{ 
+                borderRadius: 2,
+                px: 3,
+                boxShadow: '0px 4px 10px rgba(108, 99, 255, 0.3)',
+              }}
             >
               {editingBoard ? 'Update' : 'Create'}
             </Button>
@@ -702,44 +575,55 @@ function Board() {
       <Dialog
         open={deleteDialogOpen}
         onClose={handleDeleteCancel}
-        aria-labelledby="delete-dialog-title"
-        aria-describedby="delete-dialog-description"
+        maxWidth="xs"
+        fullWidth
         PaperProps={{
           sx: {
-            borderRadius: 3,
-          }
+            borderRadius: 2,
+          },
         }}
       >
-        <DialogTitle id="delete-dialog-title">
-          Delete Board
-        </DialogTitle>
+        <DialogTitle>Delete Board</DialogTitle>
         <DialogContent>
-          <DialogContentText id="delete-dialog-description">
-            Are you sure you want to delete this board? All tasks in this board will be moved to the Home board.
+          <DialogContentText>
+            Are you sure you want to delete this board? This action cannot be undone.
           </DialogContentText>
         </DialogContent>
-        <MuiDialogActions sx={{ px: 3, pb: 3 }}>
-          <Button onClick={handleDeleteCancel} variant="outlined" sx={{ borderRadius: 2 }}>
+        <DialogActions sx={{ px: 3, pb: 3 }}>
+          <Button
+            onClick={handleDeleteCancel}
+            variant="outlined"
+            sx={{ 
+              borderRadius: 2,
+              px: 3,
+            }}
+          >
             Cancel
           </Button>
-          <Button onClick={handleDeleteConfirm} color="error" variant="contained" sx={{ borderRadius: 2 }}>
+          <Button
+            onClick={handleDeleteConfirm}
+            variant="contained"
+            color="error"
+            sx={{ 
+              borderRadius: 2,
+              px: 3,
+            }}
+          >
             Delete
           </Button>
-        </MuiDialogActions>
+        </DialogActions>
       </Dialog>
 
       <Snackbar
         open={snackbar.open}
-        autoHideDuration={6000}
+        autoHideDuration={3000}
         onClose={() => setSnackbar({ ...snackbar, open: false })}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       >
-        <Alert 
-          elevation={6}
-          variant="filled"
-          onClose={() => setSnackbar({ ...snackbar, open: false })} 
+        <Alert
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
           severity={snackbar.severity}
-          sx={{ width: '100%' }}
+          sx={{ width: '100%', borderRadius: 2 }}
         >
           {snackbar.message}
         </Alert>

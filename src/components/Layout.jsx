@@ -38,7 +38,9 @@ import {
   Logout as LogoutIcon,
   FlagOutlined as FlagIcon,
   Close as CloseIcon,
+  Add as AddIcon,
 } from '@mui/icons-material';
+import { format, parseISO } from 'date-fns';
 
 const drawerWidth = 280;
 
@@ -82,6 +84,11 @@ function Layout({ children }) {
     return board ? board.name : 'Unknown Board';
   };
 
+  const getBoardColor = (boardId) => {
+    const board = boards.find(b => b.id === boardId);
+    return board ? board.color : 'primary';
+  };
+
   const getPriorityColor = (priority) => {
     switch(priority) {
       case 'high': return theme.palette.error.main;
@@ -98,7 +105,15 @@ function Layout({ children }) {
   );
 
   const handleTaskClick = (taskId) => {
-    navigate(`/task/edit/${taskId}`);
+    const task = tasks.find(t => t.id === taskId);
+    if (task) {
+      navigate(`/board`, { 
+        state: { 
+          selectedTask: taskId,
+          defaultBoard: task.board
+        }
+      });
+    }
     handleSearchClose();
   };
 
@@ -326,7 +341,7 @@ function Layout({ children }) {
                             <Chip
                               size="small"
                               label={getBoardName(task.board)}
-                              color={getSelectedBoardColor(task.board)}
+                              color={getBoardColor(task.board)}
                               sx={{ ml: 1 }}
                             />
                           </Box>
@@ -356,6 +371,21 @@ function Layout({ children }) {
           </Box>
 
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Tooltip title="New Task">
+              <IconButton
+                color="primary"
+                onClick={() => navigate('/task/new')}
+                sx={{
+                  bgcolor: 'primary.main',
+                  color: 'white',
+                  '&:hover': {
+                    bgcolor: 'primary.dark',
+                  },
+                }}
+              >
+                <AddIcon />
+              </IconButton>
+            </Tooltip>
             <Tooltip title="Notifications">
               <IconButton color="inherit">
                 <Badge badgeContent={4} color="error">
@@ -378,58 +408,53 @@ function Layout({ children }) {
         component="nav"
         sx={{ width: { md: drawerWidth }, flexShrink: { md: 0 } }}
       >
-        {isMobile ? (
-          <Drawer
-            variant="temporary"
-            open={mobileOpen}
-            onClose={handleDrawerToggle}
-            ModalProps={{
-              keepMounted: true,
-            }}
-            sx={{
-              display: { xs: 'block', md: 'none' },
-              '& .MuiDrawer-paper': {
-                boxSizing: 'border-box',
-                width: drawerWidth,
-              },
-            }}
-          >
-            {drawer}
-          </Drawer>
-        ) : (
-          <Drawer
-            variant="permanent"
-            sx={{
-              display: { xs: 'none', md: 'block' },
-              '& .MuiDrawer-paper': {
-                boxSizing: 'border-box',
-                width: drawerWidth,
-              },
-            }}
-            open
-          >
-            {drawer}
-          </Drawer>
-        )}
+        <Drawer
+          variant="temporary"
+          open={mobileOpen}
+          onClose={handleDrawerToggle}
+          ModalProps={{
+            keepMounted: true,
+          }}
+          sx={{
+            display: { xs: 'block', md: 'none' },
+            '& .MuiDrawer-paper': { 
+              boxSizing: 'border-box', 
+              width: drawerWidth,
+              bgcolor: theme.palette.primary.main,
+            },
+          }}
+        >
+          {drawer}
+        </Drawer>
+        <Drawer
+          variant="permanent"
+          sx={{
+            display: { xs: 'none', md: 'block' },
+            '& .MuiDrawer-paper': { 
+              boxSizing: 'border-box', 
+              width: drawerWidth,
+              bgcolor: theme.palette.primary.main,
+            },
+          }}
+          open
+        >
+          {drawer}
+        </Drawer>
       </Box>
       
       <Box
         component="main"
         sx={{
           flexGrow: 1,
-          p: { xs: 2, sm: 3, md: 4 },
+          p: { xs: 2, sm: 3 },
           width: { md: `calc(100% - ${drawerWidth}px)` },
-          minHeight: '100vh',
+          mt: '64px',
+          minHeight: 'calc(100vh - 64px)',
+          overflow: 'auto',
           bgcolor: 'background.default',
         }}
       >
-        <Toolbar />
-        <Box
-          sx={{
-            maxWidth: '1200px',
-            mx: 'auto',
-          }}
-        >
+        <Box sx={{ maxWidth: '1200px', mx: 'auto' }}>
           {children}
         </Box>
       </Box>
