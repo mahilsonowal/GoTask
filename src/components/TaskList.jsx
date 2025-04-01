@@ -181,26 +181,7 @@ function TaskList() {
         }}
       >
         <Box sx={{ display: 'flex',mt: 5 ,gap: 1, flexWrap: 'wrap' }}>
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={<AddIcon />}
-            onClick={() => navigate('/task/new')}
-            sx={{ 
-              borderRadius: '8px',
-              textTransform: 'none',
-              fontWeight: 500,
-              px: { xs: 2, sm: 3 },
-              py: { xs: 0.75, sm: 1 },
-              transition: 'all 0.2s ease-in-out',
-              whiteSpace: 'nowrap',
-              '&:hover': {
-                transform: 'translateY(-1px)',
-              },
-            }}
-          >
-            New Task
-          </Button>
+
           <Button
             variant="outlined"
             color="primary"
