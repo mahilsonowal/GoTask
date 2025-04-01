@@ -7,9 +7,8 @@ const initialState = savedState ? JSON.parse(savedState) : {
   boards: [
     { id: 'home', name: 'Home', color: 'primary' },
     { id: 'work', name: 'Work', color: 'secondary' },
-    { id: 'school', name: 'School', color: 'info' },
-    { id: 'fitness', name: 'Fitness', color: 'success' },
-    { id: 'shopping', name: 'Shopping', color: 'warning' },
+    { id: 'fitness', name: 'Gym', color: 'success' },
+    { id: 'shopping', name: 'Projects', color: 'warning' },
   ],
   filters: {
     status: 'all',
