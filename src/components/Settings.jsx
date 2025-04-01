@@ -6,7 +6,6 @@ import {
   Avatar,
   Button,
   TextField,
-  Grid,
   Divider,
   Switch,
   FormControlLabel,
@@ -26,6 +25,7 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
+  Grid,
 } from '@mui/material';
 import {
   Person as PersonIcon,
@@ -142,7 +142,8 @@ function Settings() {
         sx={{ 
           borderRadius: '16px',
           overflow: 'hidden',
-          mb: 4 
+          mb: 4,
+          mt: 5 
         }}
       >
         <Tabs
@@ -234,61 +235,62 @@ function Settings() {
               <Divider sx={{ mb: 4 }} />
               
               <Grid container spacing={3}>
-                <Grid item xs={12} sm={6}>
+                <Grid xs={12} sm={6}>
                   <TextField
-                    label="Full Name"
+                    fullWidth
+                    label="Name"
                     name="name"
                     value={profileData.name}
                     onChange={handleProfileChange}
-                    fullWidth
                     variant="outlined"
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
-                          <PersonIcon color="action" />
+                          <PersonIcon />
                         </InputAdornment>
                       ),
                     }}
                   />
                 </Grid>
                 
-                <Grid item xs={12} sm={6}>
+                <Grid xs={12} sm={6}>
                   <TextField
-                    label="Email Address"
+                    fullWidth
+                    label="Email"
                     name="email"
                     value={profileData.email}
                     onChange={handleProfileChange}
-                    fullWidth
                     variant="outlined"
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
-                          <EmailIcon color="action" />
+                          <EmailIcon />
                         </InputAdornment>
                       ),
                     }}
                   />
                 </Grid>
                 
-                <Grid item xs={12}>
-                  <Typography variant="h6" sx={{ mb: 2, mt: 2 }}>
+                <Grid xs={12}>
+                  <Divider sx={{ my: 2 }} />
+                  <Typography variant="subtitle1" fontWeight={600} sx={{ mb: 2 }}>
                     Change Password
                   </Typography>
                 </Grid>
                 
-                <Grid item xs={12} sm={6}>
+                <Grid xs={12} sm={6}>
                   <TextField
+                    fullWidth
                     label="Current Password"
                     name="password"
-                    type={showPassword ? "text" : "password"}
+                    type={showPassword ? 'text' : 'password'}
                     value={profileData.password}
                     onChange={handleProfileChange}
-                    fullWidth
                     variant="outlined"
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
-                          <VpnKeyIcon color="action" />
+                          <VpnKeyIcon />
                         </InputAdornment>
                       ),
                       endAdornment: (
@@ -305,26 +307,26 @@ function Settings() {
                   />
                 </Grid>
                 
-                <Grid item xs={12} sm={6}>
+                <Grid xs={12} sm={6}>
                   <TextField
+                    fullWidth
                     label="New Password"
                     name="newPassword"
-                    type={showPassword ? "text" : "password"}
+                    type={showPassword ? 'text' : 'password'}
                     value={profileData.newPassword}
                     onChange={handleProfileChange}
-                    fullWidth
                     variant="outlined"
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
-                          <VpnKeyIcon color="action" />
+                          <VpnKeyIcon />
                         </InputAdornment>
                       ),
                     }}
                   />
                 </Grid>
                 
-                <Grid item xs={12}>
+                <Grid xs={12}>
                   <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
                     <Button
                       variant="contained"
@@ -332,7 +334,7 @@ function Settings() {
                       startIcon={<SaveIcon />}
                       onClick={handleSaveProfile}
                     >
-                      Save Changes
+                      Save Profile
                     </Button>
                   </Box>
                 </Grid>
@@ -478,25 +480,28 @@ function Settings() {
               </Typography>
               
               <Grid container spacing={3}>
-                <Grid item xs={12} md={6}>
+                <Grid xs={12} md={6}>
                   <Card sx={{ mb: 3, borderRadius: '12px' }}>
                     <CardContent>
                       <Typography variant="subtitle1" fontWeight={600} gutterBottom>
                         Theme
                       </Typography>
                       
-                      <Box sx={{ mt: 2, display: 'flex', gap: 2 }}>
+                      <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
                         <Button
+                          fullWidth
                           variant={appearanceSettings.theme === 'light' ? 'contained' : 'outlined'}
+                          color="primary"
                           onClick={() => handleAppearanceChange({ target: { name: 'theme', value: 'light' } })}
                           startIcon={<LightModeIcon />}
                           sx={{ flex: 1 }}
                         >
                           Light
                         </Button>
-                        
                         <Button
+                          fullWidth
                           variant={appearanceSettings.theme === 'dark' ? 'contained' : 'outlined'}
+                          color="primary"
                           onClick={() => handleAppearanceChange({ target: { name: 'theme', value: 'dark' } })}
                           startIcon={<DarkModeIcon />}
                           sx={{ flex: 1 }}
@@ -508,7 +513,7 @@ function Settings() {
                   </Card>
                 </Grid>
                 
-                <Grid item xs={12} md={6}>
+                <Grid xs={12} md={6}>
                   <Card sx={{ mb: 3, borderRadius: '12px' }}>
                     <CardContent>
                       <Typography variant="subtitle1" fontWeight={600} gutterBottom>
@@ -535,7 +540,7 @@ function Settings() {
                   </Card>
                 </Grid>
                 
-                <Grid item xs={12} md={6}>
+                <Grid xs={12} md={6}>
                   <Card sx={{ mb: 3, borderRadius: '12px' }}>
                     <CardContent>
                       <Typography variant="subtitle1" fontWeight={600} gutterBottom>
@@ -571,7 +576,7 @@ function Settings() {
                   </Card>
                 </Grid>
                 
-                <Grid item xs={12} md={6}>
+                <Grid xs={12} md={6}>
                   <Card sx={{ mb: 3, borderRadius: '12px' }}>
                     <CardContent>
                       <Typography variant="subtitle1" fontWeight={600} gutterBottom>

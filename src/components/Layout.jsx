@@ -99,9 +99,11 @@ function Layout({ children }) {
   };
 
   const filteredTasks = tasks.filter(task => 
-    searchQuery && 
-    (task.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-     (task.description && task.description.toLowerCase().includes(searchQuery.toLowerCase())))
+    searchQuery && task && 
+    (
+      (task.title && task.title.toLowerCase().includes(searchQuery.toLowerCase())) || 
+      (task.description && task.description.toLowerCase().includes(searchQuery.toLowerCase()))
+    )
   );
 
   const handleTaskClick = (taskId) => {
@@ -125,6 +127,7 @@ function Layout({ children }) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
+          position: 'relative',
         }}
       >
         <Typography
@@ -134,9 +137,21 @@ function Layout({ children }) {
             fontWeight: 700,
             color: 'white',
             letterSpacing: '0.5px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
           }}
         >
-          <span style={{ color: theme.palette.primary.light }}>Go</span>Task
+          <span style={{ 
+            color: theme.palette.primary.light,
+            fontSize: '1.8rem',
+            fontWeight: 800,
+            letterSpacing: '-0.02em'
+          }}>Go</span>
+          <span style={{ 
+            fontSize: '1.5rem',
+            letterSpacing: '-0.01em'
+          }}>Task</span>
         </Typography>
       </Box>
       <Divider sx={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }} />
@@ -150,10 +165,24 @@ function Layout({ children }) {
             backgroundColor: 'rgba(255, 255, 255, 0.05)',
             borderRadius: '12px',
             p: 2,
+            transition: 'all 0.2s ease-in-out',
+            '&:hover': {
+              backgroundColor: 'rgba(255, 255, 255, 0.08)',
+              transform: 'translateY(-2px)',
+            },
           }}
         >
           <Avatar
-            sx={{ width: 45, height: 45, bgcolor: theme.palette.primary.main }}
+            sx={{ 
+              width: 45, 
+              height: 45, 
+              bgcolor: theme.palette.primary.main,
+              boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
+              transition: 'all 0.2s ease-in-out',
+              '&:hover': {
+                transform: 'scale(1.05)',
+              },
+            }}
           >
             M
           </Avatar>
@@ -180,15 +209,17 @@ function Layout({ children }) {
               mb: 1,
               borderRadius: '12px',
               backgroundColor: isActive(item.path)
-                ? 'rgba(108, 99, 255, 0.2)'
+                ? 'rgba(37, 99, 235, 0.2)'
                 : 'transparent',
               color: isActive(item.path) ? 'white' : 'rgba(255, 255, 255, 0.7)',
               '&:hover': {
                 backgroundColor: isActive(item.path)
-                  ? 'rgba(108, 99, 255, 0.3)'
+                  ? 'rgba(37, 99, 235, 0.3)'
                   : 'rgba(255, 255, 255, 0.05)',
+                transform: 'translateX(4px)',
               },
-              transition: 'all 0.2s',
+              transition: 'all 0.2s ease-in-out',
+              cursor: 'pointer',
             }}
           >
             <ListItemIcon
@@ -197,6 +228,7 @@ function Layout({ children }) {
                 color: isActive(item.path)
                   ? theme.palette.primary.light
                   : 'rgba(255, 255, 255, 0.6)',
+                transition: 'all 0.2s ease-in-out',
               }}
             >
               {item.icon}
@@ -205,15 +237,17 @@ function Layout({ children }) {
               primary={item.text}
               primaryTypographyProps={{
                 fontWeight: isActive(item.path) ? 600 : 400,
+                letterSpacing: '0.01em',
               }}
             />
             {isActive(item.path) && (
               <Box
                 sx={{
-                  width: 5,
+                  width: 4,
                   height: 35,
                   backgroundColor: theme.palette.primary.light,
                   borderRadius: '4px',
+                  transition: 'all 0.2s ease-in-out',
                 }}
               />
             )}
@@ -229,9 +263,11 @@ function Layout({ children }) {
           sx={{
             color: 'rgba(255, 255, 255, 0.7)',
             borderColor: 'rgba(255, 255, 255, 0.12)',
+            transition: 'all 0.2s ease-in-out',
             '&:hover': {
               borderColor: 'rgba(255, 255, 255, 0.3)',
               backgroundColor: 'rgba(255, 255, 255, 0.05)',
+              transform: 'translateY(-1px)',
             },
           }}
         >
@@ -249,161 +285,198 @@ function Layout({ children }) {
         sx={{
           width: { md: `calc(100% - ${drawerWidth}px)` },
           ml: { md: `${drawerWidth}px` },
-          bgcolor: 'background.paper',
-          color: 'text.primary',
-          boxShadow: 2,
+          backdropFilter: 'blur(8px)',
+          backgroundColor: 'rgba(255, 255, 255, 0.8)',
         }}
       >
-        <Toolbar sx={{ justifyContent: 'space-between', gap: 2 }}>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="start"
-            onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { md: 'none' } }}
-          >
-            <MenuIcon />
-          </IconButton>
-          
-          <Box sx={{ display: 'flex', alignItems: 'center', flex: 1, gap: 2 }}>
-            <Typography
-              variant="h6"
-              noWrap
-              component="div"
-              sx={{ display: { xs: 'none', sm: 'block' } }}
+        <Toolbar sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 1 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              edge="start"
+              onClick={handleDrawerToggle}
+              sx={{ mr: 2, display: { md: 'none' } }}
             >
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="h6" noWrap component="div" sx={{ fontWeight: 600, flexShrink: 0 }}>
               {menuItems.find(item => isActive(item.path))?.text || 'GoTask'}
             </Typography>
-
-            <Box sx={{ position: 'relative', flex: 1, maxWidth: { xs: '100%', sm: 400 } }}>
-              <TextField
-                fullWidth
-                size="small"
-                placeholder="Search tasks..."
-                value={searchQuery}
-                onChange={handleSearchChange}
-                onFocus={handleSearchOpen}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon />
-                    </InputAdornment>
-                  ),
-                  endAdornment: searchQuery && (
-                    <InputAdornment position="end">
-                      <IconButton size="small" onClick={handleSearchClose}>
-                        <CloseIcon />
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-                sx={{
-                  '& .MuiOutlinedInput-root': {
-                    backgroundColor: 'background.paper',
-                    '&:hover': {
-                      backgroundColor: 'action.hover',
-                    },
-                  },
-                }}
-              />
-              
-              {searchOpen && searchQuery && (
-                <Paper
-                  sx={{
-                    position: 'absolute',
-                    top: '100%',
-                    left: 0,
-                    right: 0,
-                    mt: 1,
-                    maxHeight: 400,
-                    overflow: 'auto',
-                    zIndex: 1300,
-                    boxShadow: 3,
-                  }}
-                >
-                  <List>
-                    {filteredTasks.length > 0 ? (
-                      filteredTasks.map((task) => (
-                        <ListItemButton
-                          key={task.id}
-                          onClick={() => handleTaskClick(task.id)}
-                          sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'flex-start',
-                            gap: 0.5,
-                          }}
-                        >
-                          <Box sx={{ display: 'flex', alignItems: 'center', width: '100%', gap: 1 }}>
-                            <Typography variant="subtitle1" sx={{ flex: 1 }}>
-                              {task.title}
-                            </Typography>
-                            <Chip
-                              size="small"
-                              label={getBoardName(task.board)}
-                              color={getBoardColor(task.board)}
-                              sx={{ ml: 1 }}
-                            />
-                          </Box>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <Chip
-                              size="small"
-                              label={task.priority}
-                              color={getPriorityColor(task.priority)}
-                            />
-                            {task.dueDate && (
-                              <Typography variant="caption" color="text.secondary">
-                                Due: {format(parseISO(task.dueDate), 'MMM d, yyyy')}
-                              </Typography>
-                            )}
-                          </Box>
-                        </ListItemButton>
-                      ))
-                    ) : (
-                      <ListItem>
-                        <ListItemText primary="No tasks found" />
-                      </ListItem>
-                    )}
-                  </List>
-                </Paper>
-              )}
-            </Box>
           </Box>
-
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          
+          <Box 
+            sx={{ 
+              display: 'flex', 
+              flex: { xs: '1 1 100%', sm: '1 1 auto' }, 
+              order: { xs: 3, sm: 2 },
+              mt: { xs: 1, sm: 0 },
+              mx: { xs: 0, md: 2 },
+              maxWidth: { xs: '100%', sm: '320px', md: '400px' },
+            }}
+          >
+            <TextField
+              fullWidth
+              size="small"
+              placeholder="Search tasks..."
+              value={searchQuery}
+              onChange={handleSearchChange}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon sx={{ color: 'text.secondary' }} />
+                  </InputAdornment>
+                ),
+                endAdornment: searchQuery && (
+                  <InputAdornment position="end">
+                    <IconButton
+                      size="small"
+                      onClick={() => setSearchQuery('')}
+                      sx={{ color: 'text.secondary' }}
+                    >
+                      <CloseIcon fontSize="small" />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+                sx: {
+                  borderRadius: '8px',
+                  backgroundColor: 'rgba(255, 255, 255, 0.5)',
+                  '&:hover': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                  }
+                }
+              }}
+            />
+            {searchQuery && filteredTasks.length > 0 && (
+              <Paper
+                sx={{
+                  position: 'absolute',
+                  top: '100%',
+                  left: { xs: 0, md: 'auto' },
+                  right: 0,
+                  mt: 1,
+                  width: { xs: 'calc(100% - 32px)', sm: 'auto', md: '400px' },
+                  mx: { xs: 2, md: 0 },
+                  maxHeight: '400px',
+                  overflow: 'auto',
+                  zIndex: 1300,
+                  boxShadow: 3,
+                  borderRadius: '8px',
+                }}
+              >
+                <List>
+                  {filteredTasks.map((task) => (
+                    <ListItemButton
+                      key={task.id}
+                      onClick={() => handleTaskClick(task.id)}
+                      sx={{
+                        borderRadius: '8px',
+                        m: 0.5,
+                        transition: 'all 0.2s ease-in-out',
+                        '&:hover': {
+                          backgroundColor: 'rgba(37, 99, 235, 0.08)',
+                        },
+                      }}
+                    >
+                      <ListItemText
+                        primary={task.title}
+                        secondary={
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.5, flexWrap: 'wrap' }}>
+                            <Chip
+                              label={getBoardName(task.board)}
+                              size="small"
+                              sx={{
+                                backgroundColor: `${getBoardColor(task.board)}20`,
+                                color: getBoardColor(task.board),
+                                fontWeight: 500,
+                                height: 20,
+                                '& .MuiChip-label': { px: 1, py: 0 },
+                              }}
+                            />
+                            <Chip
+                              label={task.priority}
+                              size="small"
+                              sx={{
+                                backgroundColor: `${getPriorityColor(task.priority)}20`,
+                                color: getPriorityColor(task.priority),
+                                fontWeight: 500,
+                                height: 20,
+                                '& .MuiChip-label': { px: 1, py: 0 },
+                              }}
+                            />
+                          </Box>
+                        }
+                        primaryTypographyProps={{
+                          noWrap: true,
+                          sx: { fontWeight: 500 }
+                        }}
+                      />
+                    </ListItemButton>
+                  ))}
+                </List>
+              </Paper>
+            )}
+          </Box>
+          
+          <Box sx={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: 1, 
+            order: { xs: 2, sm: 3 },
+            flexShrink: 0 
+          }}>
+            <Button
+              variant="contained"
+              color="primary"
+              size="small"
+              startIcon={<AddIcon />}
+              onClick={() => navigate('/task/new')}
+              sx={{ 
+                display: { xs: 'none', sm: 'flex' },
+                borderRadius: '8px',
+                whiteSpace: 'nowrap',
+                px: { sm: 1, md: 2 },
+                py: 1,
+                '& .MuiButton-startIcon': {
+                  mr: { sm: 0.5, md: 1 }
+                }
+              }}
+            >
+              <Box sx={{ display: { sm: 'none', md: 'block' } }}>New Task</Box>
+            </Button>
             <Tooltip title="New Task">
               <IconButton
                 color="primary"
                 onClick={() => navigate('/task/new')}
-                sx={{
+                sx={{ 
+                  display: { xs: 'flex', sm: 'none' },
                   bgcolor: 'primary.main',
                   color: 'white',
-                  '&:hover': {
-                    bgcolor: 'primary.dark',
-                  },
+                  '&:hover': { bgcolor: 'primary.dark' }
                 }}
               >
                 <AddIcon />
               </IconButton>
             </Tooltip>
             <Tooltip title="Notifications">
-              <IconButton color="inherit">
+              <IconButton
+                sx={{
+                  color: 'text.secondary',
+                  transition: 'all 0.2s ease-in-out',
+                  '&:hover': {
+                    color: 'primary.main',
+                    transform: 'scale(1.05)',
+                  },
+                }}
+              >
                 <Badge badgeContent={4} color="error">
                   <NotificationsIcon />
                 </Badge>
               </IconButton>
             </Tooltip>
-            <Tooltip title="Profile">
-              <IconButton color="inherit">
-                <Avatar sx={{ width: 32, height: 32, bgcolor: theme.palette.primary.main }}>
-                  M
-                </Avatar>
-              </IconButton>
-            </Tooltip>
           </Box>
         </Toolbar>
       </AppBar>
-      
       <Box
         component="nav"
         sx={{ width: { md: drawerWidth }, flexShrink: { md: 0 } }}
@@ -413,14 +486,14 @@ function Layout({ children }) {
           open={mobileOpen}
           onClose={handleDrawerToggle}
           ModalProps={{
-            keepMounted: true,
+            keepMounted: true, // Better open performance on mobile.
           }}
           sx={{
             display: { xs: 'block', md: 'none' },
             '& .MuiDrawer-paper': { 
               boxSizing: 'border-box', 
               width: drawerWidth,
-              bgcolor: theme.palette.primary.main,
+              borderRight: 'none',
             },
           }}
         >
@@ -433,7 +506,7 @@ function Layout({ children }) {
             '& .MuiDrawer-paper': { 
               boxSizing: 'border-box', 
               width: drawerWidth,
-              bgcolor: theme.palette.primary.main,
+              borderRight: 'none',
             },
           }}
           open
@@ -441,22 +514,18 @@ function Layout({ children }) {
           {drawer}
         </Drawer>
       </Box>
-      
       <Box
         component="main"
         sx={{
           flexGrow: 1,
           p: { xs: 2, sm: 3 },
           width: { md: `calc(100% - ${drawerWidth}px)` },
-          mt: '64px',
-          minHeight: 'calc(100vh - 64px)',
-          overflow: 'auto',
-          bgcolor: 'background.default',
+          mt: { xs: '56px', sm: '64px' },
+          backgroundColor: 'background.default',
+          minHeight: { xs: 'calc(100vh - 56px)', sm: 'calc(100vh - 64px)' },
         }}
       >
-        <Box sx={{ maxWidth: '1200px', mx: 'auto' }}>
-          {children}
-        </Box>
+        {children}
       </Box>
     </Box>
   );

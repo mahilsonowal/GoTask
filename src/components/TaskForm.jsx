@@ -40,6 +40,7 @@ import {
   RadioGroup,
   Radio,
   DialogContentText,
+  Checkbox,
 } from '@mui/material';
 import { 
   Delete as DeleteIcon, 
@@ -212,12 +213,12 @@ function TaskForm() {
   };
 
   const getSelectedBoardColor = () => {
-    const selectedBoard = boards.find(b => b.id === task.board);
+    const selectedBoard = boards.find(b => b && b.id === task.board);
     return selectedBoard ? selectedBoard.color : 'primary';
   };
 
   const getSelectedBoardName = () => {
-    const selectedBoard = boards.find(b => b.id === task.board);
+    const selectedBoard = boards.find(b => b && b.id === task.board);
     return selectedBoard ? selectedBoard.name : 'Unknown Board';
   };
 
@@ -303,7 +304,16 @@ function TaskForm() {
             ),
           }}
         />
-        <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
+        <Stack 
+          direction="row" 
+          spacing={1} 
+          sx={{ 
+            mt: 1, 
+            flexWrap: 'wrap', 
+            gap: 0.5, 
+            '& .MuiChip-root': { mb: 0.5 } 
+          }}
+        >
           {datePresets[dateType].map((preset) => (
             <Chip
               key={preset.label}
@@ -312,6 +322,10 @@ function TaskForm() {
               onClick={() => handleDatePresetSelect(dateType, preset.value)}
               variant={task[dateType] === preset.value ? "filled" : "outlined"}
               color={task[dateType] === preset.value ? "primary" : "default"}
+              sx={{ 
+                height: 24, 
+                '& .MuiChip-label': { px: 1, py: 0.5 }
+              }}
             />
           ))}
           {task[dateType] && (
@@ -321,6 +335,10 @@ function TaskForm() {
               onClick={() => handleDatePresetSelect(dateType, '')}
               variant="outlined"
               color="default"
+              sx={{ 
+                height: 24, 
+                '& .MuiChip-label': { px: 1, py: 0.5 }
+              }}
             />
           )}
         </Stack>
@@ -356,54 +374,46 @@ function TaskForm() {
         }}
       >
         <form onSubmit={handleSubmit}>
-          <Box sx={{ p: 3, pb: 0 }}>
-            <Grid container spacing={3}>
+          <Box sx={{ p: { xs: 2, sm: 3 }, pb: 0 }}>
+            <Grid container spacing={{ xs: 2, sm: 3 }}>
               <Grid xs={12}>
+                <Typography variant="subtitle2" fontWeight={500} sx={{ mb: 1 }}>
+                  Title
+                  {errors.title && (
+                    <Typography component="span" color="error" sx={{ ml: 1, fontSize: '0.8rem' }}>
+                      {errors.title}
+                    </Typography>
+                  )}
+                </Typography>
                 <TextField
-                  required
-                  fullWidth
-                  placeholder="Task title"
                   name="title"
                   value={task.title}
                   onChange={handleChange}
-                  error={!!errors.title}
-                  helperText={errors.title}
+                  placeholder="Task title"
+                  fullWidth
                   variant="outlined"
-                  InputProps={{
-                    sx: { 
-                      fontSize: '1.25rem',
-                      fontWeight: 500,
-                      py: 1,
-                      borderRadius: '12px',
-                    }
-                  }}
+                  error={!!errors.title}
+                  sx={{ mb: 2, borderRadius: '12px' }}
                 />
               </Grid>
-
+              
               <Grid xs={12}>
+                <Typography variant="subtitle2" fontWeight={500} sx={{ mb: 1 }}>
+                  Description
+                </Typography>
                 <TextField
-                  fullWidth
-                  multiline
-                  rows={4}
-                  placeholder="Description (optional)"
                   name="description"
                   value={task.description}
                   onChange={handleChange}
+                  placeholder="Task description"
+                  multiline
+                  rows={3}
+                  fullWidth
                   variant="outlined"
-                  InputProps={{
-                    sx: { borderRadius: '12px' }
-                  }}
+                  sx={{ mb: 2, borderRadius: '12px' }}
                 />
               </Grid>
-            </Grid>
-          </Box>
-
-          <Box sx={{ px: 3, py: 2 }}>
-            <Typography variant="subtitle1" fontWeight={600} sx={{ mb: 2 }}>
-              Task Details
-            </Typography>
-            
-            <Grid container spacing={3}>
+              
               <Grid xs={12} sm={6}>
                 <Typography variant="subtitle2" fontWeight={500} sx={{ mb: 1 }}>
                   Board
@@ -430,7 +440,8 @@ function TaskForm() {
                         bgcolor: task.board === board.id ? `${theme.palette[board.color].main}10` : 'transparent',
                         '&:hover': {
                           bgcolor: task.board === board.id ? `${theme.palette[board.color].main}20` : 'rgba(0, 0, 0, 0.04)',
-                        }
+                        },
+                        mb: 0.5
                       }}
                     />
                   ))}
@@ -443,8 +454,9 @@ function TaskForm() {
                     sx={{ 
                       borderStyle: 'dashed',
                       '&:hover': {
-                        bgcolor: 'rgba(108, 99, 255, 0.08)',
-                      }
+                        bgcolor: 'rgba(37, 99, 235, 0.08)',
+                      },
+                      mb: 0.5
                     }}
                   />
                 </Box>
@@ -463,58 +475,73 @@ function TaskForm() {
                     label="Priority"
                     onChange={handleChange}
                     sx={{ borderRadius: '12px' }}
+                    MenuProps={{
+                      PaperProps: {
+                        sx: { maxHeight: '300px' }
+                      }
+                    }}
                     endAdornment={
                       <InputAdornment position="end">
                         <FlagIcon 
-                          color={priorityColors[task.priority]} 
+                          color={priorityColors[task.priority || 'medium']} 
                           sx={{ mr: 1 }}
                         />
                       </InputAdornment>
                     }
                   >
-                    <MenuItem  value="low">
-                      <Box sx={{ display: 'flex', alignItems: 'center', width: '20vh' }}>
-                        <FlagIcon color="success" sx={{ mr: 1 }} />
-                        Low Priority
-                      </Box>
-                    </MenuItem>
-                    <MenuItem value="medium">
-                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <FlagIcon color="warning" sx={{ mr: 1 }} />
-                        Medium Priority
-                      </Box>
-                    </MenuItem>
-                    <MenuItem value="high">
-                      <Box sx={{ display: 'flex', alignItems: 'center', width: '20vh' }}>
-                        <FlagIcon color="error" sx={{ mr: 1 }} />
-                        High Priority
-                      </Box>
-                    </MenuItem>
+                    <MenuItem value="low">Low</MenuItem>
+                    <MenuItem value="medium">Medium</MenuItem>
+                    <MenuItem value="high">High</MenuItem>
                   </Select>
-                  {errors.priority && (
-                    <FormHelperText>{errors.priority}</FormHelperText>
-                  )}
+                </FormControl>
+              </Grid>
+              
+              <Grid xs={12} sm={6}>
+                <FormControl fullWidth>
+                  <Typography variant="subtitle2" fontWeight={500} sx={{ mb: 1 }}>
+                    Start Date
+                  </Typography>
+                  <TextField
+                    type="date"
+                    name="startDate"
+                    value={task.startDate || ''}
+                    onChange={handleChange}
+                    variant="outlined"
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    sx={{ borderRadius: '12px' }}
+                  />
                 </FormControl>
               </Grid>
 
               <Grid xs={12} sm={6}>
-                {renderDateField("Start Date", "startDate", "Set a start date for your task")}
-              </Grid>
-
-              <Grid xs={12} sm={6}>
-                {renderDateField("Due Date", "dueDate", "Set a due date for your task")}
+                <FormControl fullWidth>
+                  <Typography variant="subtitle2" fontWeight={500} sx={{ mb: 1 }}>
+                    Due Date
+                  </Typography>
+                  <TextField
+                    type="date"
+                    name="dueDate"
+                    value={task.dueDate || ''}
+                    onChange={handleChange}
+                    variant="outlined"
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    sx={{ borderRadius: '12px' }}
+                  />
+                </FormControl>
               </Grid>
             </Grid>
           </Box>
 
-          <Divider />
-
-          <Box sx={{ px: 3, py: 2 }}>
+          <Box sx={{ px: { xs: 2, sm: 3 }, py: 2 }}>
             <Typography variant="subtitle1" fontWeight={600} sx={{ mb: 2 }}>
               Notifications & Status
             </Typography>
 
-            <Grid container spacing={2}>
+            <Grid container spacing={{ xs: 2, sm: 2 }}>
               <Grid xs={12} sm={4}>
                 <FormControlLabel
                   control={
@@ -527,8 +554,8 @@ function TaskForm() {
                     />
                   }
                   label={
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <Typography sx={{ mr: 1 }}>Start date notification</Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+                      <Typography sx={{ mr: 1, fontSize: { xs: '0.875rem', sm: '1rem' } }}>Start date notification</Typography>
                       {!task.startDate && (
                         <Tooltip title="Set a start date first">
                           <span>ⓘ</span>
@@ -551,8 +578,8 @@ function TaskForm() {
                     />
                   }
                   label={
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <Typography sx={{ mr: 1 }}>Due date notification</Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+                      <Typography sx={{ mr: 1, fontSize: { xs: '0.875rem', sm: '1rem' } }}>Due date notification</Typography>
                       {!task.dueDate && (
                         <Tooltip title="Set a due date first">
                           <span>ⓘ</span>
@@ -574,8 +601,8 @@ function TaskForm() {
                     />
                   }
                   label={
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <Typography sx={{ mr: 1 }}>Mark as completed</Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+                      <Typography sx={{ mr: 1, fontSize: { xs: '0.875rem', sm: '1rem' } }}>Mark as completed</Typography>
                       {task.completed && <CheckCircleIcon color="success" fontSize="small" />}
                     </Box>
                   }
@@ -586,104 +613,60 @@ function TaskForm() {
 
           <Divider />
 
-          <Box sx={{ px: 3, py: 2 }}>
+          <Box sx={{ px: { xs: 2, sm: 3 }, py: 2 }}>
             <Typography variant="subtitle1" fontWeight={600} sx={{ mb: 2 }}>
               Subtasks
             </Typography>
             
-            <Grid container spacing={2}>
+            <Grid container spacing={1}>
               <Grid xs={12}>
-                <Box 
-                  sx={{ 
-                    display: 'flex',
-                    backgroundColor: 'background.default',
-                    borderRadius: '12px',
-                    overflow: 'hidden',
-                    mb: 2,
-                  }}
-                >
-                  <TextField
-                    fullWidth
-                    placeholder="Add a subtask"
-                    value={newSubtask}
-                    onChange={(e) => setNewSubtask(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddSubtask())}
-                    variant="outlined"
-                    InputProps={{
-                      sx: { 
-                        borderRadius: 0,
-                        '& fieldset': { border: 'none' }
-                      }
-                    }}
-                  />
-                  <Button
-                    onClick={handleAddSubtask}
-                    variant="contained"
-                    sx={{ 
-                      px: 2,
-                      borderRadius: 0
-                    }}
-                  >
-                    <AddIcon />
-                  </Button>
-                </Box>
-              </Grid>
-              
-              <Grid xs={12}>
-                {task.subtasks.length > 0 ? (
-                  <Paper 
-                    variant="outlined"
-                    sx={{ 
-                      borderRadius: '12px',
-                      overflow: 'hidden',
-                      border: '1px solid',
-                      borderColor: 'divider'
-                    }}
-                  >
-                    <List sx={{ p: 0 }}>
-                      {task.subtasks.map((subtask, index) => (
-                        <ListItem
-                          key={subtask.id}
-                          sx={{
-                            py: 1.5,
-                            px: 5,
-                            ...(index !== task.subtasks.length - 1 && {
-                              borderBottom: '1px solid',
-                              borderColor: 'divider',
-                            }),
-                          }}
-                        >
-                          <ListItemText
-                            primary={subtask.title}
-                            primaryTypographyProps={{
-                              fontWeight: 500,
-                            }}
-                          />
-                          <ListItemSecondaryAction>
-                            <IconButton
-                              edge="end"
-                              onClick={() => handleDeleteSubtask(subtask.id)}
-                              sx={{ color: theme.palette.text.secondary }}
-                            >
-                              <DeleteIcon />
-                            </IconButton>
-                          </ListItemSecondaryAction>
-                        </ListItem>
-                      ))}
-                    </List>
-                  </Paper>
+                {task.subtasks?.length > 0 ? (
+                  task.subtasks.map((subtask, index) => (
+                    <Box 
+                      key={index} 
+                      sx={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        mb: 1,
+                        backgroundColor: 'background.paper', 
+                        p: 1,
+                        borderRadius: '8px',
+                        border: '1px solid',
+                        borderColor: 'divider',
+                      }}
+                    >
+                      <Checkbox
+                        checked={subtask.completed}
+                        onChange={(e) => handleSubtaskChange(index, 'completed', e.target.checked)}
+                        size="small"
+                      />
+                      <TextField
+                        value={subtask.text}
+                        onChange={(e) => handleSubtaskChange(index, 'text', e.target.value)}
+                        variant="standard"
+                        fullWidth
+                        placeholder="Subtask description"
+                        InputProps={{ 
+                          disableUnderline: true, 
+                          sx: { 
+                            fontSize: '0.9rem',
+                            textDecoration: subtask.completed ? 'line-through' : 'none',
+                            color: subtask.completed ? 'text.secondary' : 'text.primary',
+                          } 
+                        }}
+                      />
+                      <IconButton 
+                        size="small" 
+                        onClick={() => handleRemoveSubtask(index)}
+                        sx={{ color: 'text.secondary' }}
+                      >
+                        <DeleteIcon fontSize="small" />
+                      </IconButton>
+                    </Box>
+                  ))
                 ) : (
-                  <Typography 
-                    color="text.secondary" 
-                    align="center"
-                    sx={{ 
-                      fontStyle: 'italic',
-                      backgroundColor: 'background.default',
-                      py: 4,
-                      borderRadius: '12px'
-                    }}
-                  >
-                    No subtasks yet. Add some subtasks to break down your task.
+                  <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic', textAlign: 'center' }}>
+                    No subtasks added yet
                   </Typography>
                 )}
               </Grid>
@@ -692,17 +675,23 @@ function TaskForm() {
 
           <Box 
             sx={{ 
-              p: 3, 
+              p: { xs: 2, sm: 3 }, 
               backgroundColor: 'background.default',
               borderTop: '1px solid',
               borderColor: 'divider',
               display: 'flex',
+              flexDirection: { xs: 'column', sm: 'row' },
               justifyContent: 'space-between',
               gap: 2,
-              alignItems: 'center',
+              alignItems: { xs: 'stretch', sm: 'center' },
             }}
           >
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              flexWrap: 'wrap',
+              gap: 1
+            }}>
               <Chip
                 avatar={
                   <Avatar 
@@ -712,29 +701,32 @@ function TaskForm() {
                   </Avatar>
                 }
                 label={getSelectedBoardName()}
-                sx={{ mr: 1 }}
+                sx={{ mb: 0.5 }}
               />
               <Chip
                 avatar={
-                  <Avatar sx={{ bgcolor: `${theme.palette[priorityColors[task.priority]].main} !important` }}>
+                  <Avatar sx={{ bgcolor: `${theme.palette[priorityColors[task.priority || 'medium']].main} !important` }}>
                     <FlagIcon fontSize="small" />
                   </Avatar>
                 }
-                label={`${task.priority.charAt(0).toUpperCase() + task.priority.slice(1)} Priority`}
+                label={`${task.priority ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1) : 'Medium'} Priority`}
+                sx={{ mb: 0.5 }}
               />
             </Box>
             
-            <Box>
+            <Box sx={{ 
+              display: 'flex', 
+              gap: 2,
+              flexDirection: { xs: 'column', sm: 'row' }, 
+              width: { xs: '100%', sm: 'auto' }
+            }}>
               <Button
                 variant="outlined"
                 onClick={() => navigate(-1)}
                 sx={{ 
-                  mr: 2, 
                   borderRadius: '8px',
-                  fontSize: isMobile ? '0.8rem' : 'inherit',
-                  py: isMobile ? 0.2 : 1,
-                  px: isMobile ? 0.5 : 2,
-                
+                  py: 1,
+                  flexGrow: { xs: 1, sm: 0 },
                 }}
               >
                 Cancel
@@ -745,10 +737,8 @@ function TaskForm() {
                 color="primary"
                 sx={{ 
                   borderRadius: '8px',
-                  fontSize: isMobile ? '0.8rem' : 'inherit',
-                  mt: isMobile ? 2 : 0,
-                  py: isMobile ? 0.2 : 1,
-                  px: isMobile ? 0.5 : 2,
+                  py: 1,
+                  flexGrow: { xs: 1, sm: 0 },
                 }}
               >
                 {id ? 'Update Task' : 'Create Task'}

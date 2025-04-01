@@ -8,7 +8,6 @@ import {
   Typography,
   Chip,
   IconButton,
-  Grid,
   FormControl,
   InputLabel,
   Select,
@@ -33,6 +32,7 @@ import {
   Switch,
   FormControlLabel,
   InputAdornment,
+  Grid,
 } from '@mui/material';
 import {
   Edit as EditIcon,
@@ -47,6 +47,7 @@ import {
   CheckCircleOutline as CheckCircleIcon,
   RadioButtonUnchecked as UncheckedIcon,
   DateRange as DateRangeIcon,
+  Add as AddIcon,
 } from '@mui/icons-material';
 import { format, parseISO, isValid, isAfter, isBefore, isWithinInterval, endOfDay } from 'date-fns';
 import {
@@ -72,12 +73,14 @@ function TaskList() {
   const [showFilters, setShowFilters] = useState(false);
 
   const getBoardName = (boardId) => {
-    const board = boards.find(b => b.id === boardId);
+    if (!boardId) return 'Unknown';
+    const board = boards.find(b => b && b.id === boardId);
     return board ? board.name : 'Unknown Board';
   };
 
   const getBoardColor = (boardId) => {
-    const board = boards.find(b => b.id === boardId);
+    if (!boardId) return 'default';
+    const board = boards.find(b => b && b.id === boardId);
     return board ? board.color : 'default';
   };
 
@@ -153,7 +156,7 @@ function TaskList() {
 
   const calculateProgress = (subtasks) => {
     if (!subtasks?.length) return 0;
-    return (subtasks.filter((st) => st.completed).length / subtasks.length) * 100;
+    return (subtasks.filter((st) => st && st.completed).length / subtasks.length) * 100;
   };
 
   const toggleComplete = (taskId) => {
@@ -162,7 +165,7 @@ function TaskList() {
 
   const getCompletedSubtasksCount = (subtasks) => {
     if (!subtasks?.length) return "0/0";
-    return `${subtasks.filter(st => st.completed).length}/${subtasks.length}`;
+    return `${subtasks.filter(st => st && st.completed).length}/${subtasks.length}`;
   };
 
   return (
@@ -173,36 +176,72 @@ function TaskList() {
           justifyContent: 'space-between', 
           mb: 3,
           alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: 2,
         }}
       >
-
-        <Button
-          variant="outlined"
-          color="primary"
-          startIcon={<FilterIcon />}
-          onClick={() => setShowFilters(!showFilters)}
-          sx={{ 
-            borderRadius: '8px',
-            '&:hover': {
-              backgroundColor: 'rgba(108, 99, 255, 0.04)',
-            },
-          }}
-        >
-          Filter
-        </Button>
+        <Box sx={{ display: 'flex',mt: 5 ,gap: 1, flexWrap: 'wrap' }}>
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<AddIcon />}
+            onClick={() => navigate('/task/new')}
+            sx={{ 
+              borderRadius: '8px',
+              textTransform: 'none',
+              fontWeight: 500,
+              px: { xs: 2, sm: 3 },
+              py: { xs: 0.75, sm: 1 },
+              transition: 'all 0.2s ease-in-out',
+              whiteSpace: 'nowrap',
+              '&:hover': {
+                transform: 'translateY(-1px)',
+              },
+            }}
+          >
+            New Task
+          </Button>
+          <Button
+            variant="outlined"
+            color="primary"
+            startIcon={<FilterIcon />}
+            onClick={() => setShowFilters(!showFilters)}
+            sx={{ 
+              borderRadius: '8px',
+              textTransform: 'none',
+              fontWeight: 500,
+              px: { xs: 2, sm: 3 },
+              py: { xs: 0.75, sm: 1 },
+              transition: 'all 0.2s ease-in-out',
+              whiteSpace: 'nowrap',
+              '&:hover': {
+                backgroundColor: 'rgba(37, 99, 235, 0.04)',
+                transform: 'translateY(-1px)',
+              },
+            }}
+          >
+            {showFilters ? 'Hide Filters' : 'Show Filters'}
+          </Button>
+        </Box>
       </Box>
 
       <Collapse in={showFilters}>
         <Paper 
-          elevation={3} 
+          elevation={0}
           sx={{ 
-            p: 3, 
+            p: { xs: 2, sm: 3 }, 
             mb: 4, 
             borderRadius: '16px',
             backgroundColor: 'background.paper',
+            border: '1px solid',
+            borderColor: 'divider',
+            transition: 'all 0.3s ease-in-out',
+            '&:hover': {
+              boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.05)',
+            },
           }}
         >
-          <Grid container spacing={3}>
+          <Grid container spacing={{ xs: 2, sm: 3 }}>
             <Grid xs={12} sm={6} md={3}>
               <FormControl fullWidth variant="outlined" size="small">
                 <InputLabel>Status</InputLabel>
@@ -210,6 +249,14 @@ function TaskList() {
                   value={filters.status}
                   label="Status"
                   onChange={(e) => handleFilterChange('status', e.target.value)}
+                  sx={{
+                    '& .MuiOutlinedInput-notchedOutline': {
+                      borderColor: 'rgba(0, 0, 0, 0.12)',
+                    },
+                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                      borderColor: 'rgba(0, 0, 0, 0.23)',
+                    },
+                  }}
                 >
                   <MenuItem value="all">All Status</MenuItem>
                   <MenuItem value="active">Active</MenuItem>
@@ -225,6 +272,14 @@ function TaskList() {
                   value={filters.board}
                   label="Board"
                   onChange={(e) => handleFilterChange('board', e.target.value)}
+                  sx={{
+                    '& .MuiOutlinedInput-notchedOutline': {
+                      borderColor: 'rgba(0, 0, 0, 0.12)',
+                    },
+                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                      borderColor: 'rgba(0, 0, 0, 0.23)',
+                    },
+                  }}
                 >
                   <MenuItem value="all">All Boards</MenuItem>
                   {boards.map((board) => (
@@ -243,6 +298,14 @@ function TaskList() {
                   value={filters.priority}
                   label="Priority"
                   onChange={(e) => handleFilterChange('priority', e.target.value)}
+                  sx={{
+                    '& .MuiOutlinedInput-notchedOutline': {
+                      borderColor: 'rgba(0, 0, 0, 0.12)',
+                    },
+                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                      borderColor: 'rgba(0, 0, 0, 0.23)',
+                    },
+                  }}
                 >
                   <MenuItem value="all">All Priorities</MenuItem>
                   <MenuItem value="high">High</MenuItem>
@@ -259,6 +322,14 @@ function TaskList() {
                   value={filters.sortBy}
                   label="Sort By"
                   onChange={(e) => handleFilterChange('sortBy', e.target.value)}
+                  sx={{
+                    '& .MuiOutlinedInput-notchedOutline': {
+                      borderColor: 'rgba(0, 0, 0, 0.12)',
+                    },
+                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                      borderColor: 'rgba(0, 0, 0, 0.23)',
+                    },
+                  }}
                 >
                   <MenuItem value="dueDate">Due Date</MenuItem>
                   <MenuItem value="priority">Priority</MenuItem>
@@ -266,342 +337,244 @@ function TaskList() {
                 </Select>
               </FormControl>
             </Grid>
-            
-            <Grid container xs={12} spacing={2} sx={{ mt: 1 }}>
-              <Grid xs={12} sm={6}>
-                <TextField
-                  label="From Date"
-                  type="date"
-                  fullWidth
-                  size="small"
-                  value={filters.dateRange?.startDate || ''}
-                  onChange={(e) => handleDateRangeChange('startDate', e.target.value ? parseISO(e.target.value) : null)}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <CalendarIcon color="action" />
-                      </InputAdornment>
-                    ),
-                  }}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                />
-              </Grid>
-              
-              <Grid xs={12} sm={6}>
-                <TextField
-                  label="To Date"
-                  type="date"
-                  fullWidth
-                  size="small"
-                  value={filters.dateRange?.endDate || ''}
-                  onChange={(e) => handleDateRangeChange('endDate', e.target.value ? parseISO(e.target.value) : null)}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <CalendarIcon color="action" />
-                      </InputAdornment>
-                    ),
-                  }}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                />
-              </Grid>
-              
-              {(filters.dateRange?.startDate || filters.dateRange?.endDate) && (
-                <Grid xs={12} sx={{ mt: 1 }}>
-                  <Button 
-                    size="small" 
-                    variant="outlined"
-                    onClick={() => dispatch(updateFilters({ 
-                      dateRange: { startDate: '', endDate: '' } 
-                    }))}
-                  >
-                    Clear Date Filter
-                  </Button>
-                </Grid>
-              )}
-            </Grid>
           </Grid>
         </Paper>
       </Collapse>
 
-      {filteredTasks.length === 0 ? (
-        <Box 
-          sx={{ 
-            display: 'flex', 
-            flexDirection: 'column', 
-            alignItems: 'center', 
-            justifyContent: 'center',
-            p: 6,
-            textAlign: 'center',
-          }}
-        >
-          <Box 
-            sx={{ 
-              width: 120, 
-              height: 120, 
-              borderRadius: '50%', 
-              backgroundColor: 'rgba(108, 99, 255, 0.1)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              mb: 2,
-            }}
-          >
-            <CheckCircleIcon sx={{ fontSize: 60, color: theme.palette.primary.main }} />
-          </Box>
-          <Typography variant="h6" sx={{ mb: 1 }}>
-            No tasks found
-          </Typography>
-          <Typography variant="body1" color="text.secondary">
-            Try changing your filters or create a new task
-          </Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            sx={{ mt: 3 }}
-            onClick={() => navigate('/task/new')}
-          >
-            Create New Task
-          </Button>
-        </Box>
-      ) : (
-        <Grid container spacing={3}>
-          {filteredTasks.map((task) => (
-            <Grid key={task.id} xs={12} sm={6} lg={4}>
-              <Card 
-                sx={{ 
-                  height: '100%',
-                  position: 'relative',
-                  overflow: 'visible',
-                }}
-              >
-                <Box 
-                  sx={{
-                    position: 'absolute',
-                    top: 16,
-                    left: 0,
-                    width: '4px',
-                    height: 'calc(100% - 32px)',
-                    backgroundColor: task.completed ? theme.palette.success.main : getBoardColor(task.board),
-                    borderTopRightRadius: '4px',
-                    borderBottomRightRadius: '4px',
-                  }}
-                />
-                <CardContent sx={{ pb: 2 }}>
-                  <Box 
-                    sx={{ 
-                      display: 'flex', 
-                      alignItems: 'flex-start', 
-                      mb: 1.5, 
-                      pr: 1 
+      <Grid container spacing={{ xs: 2, sm: 2 }}>
+        {filteredTasks.length > 0 ? filteredTasks.map((task) => (
+          <Grid xs={12} key={task.id}>
+            <Card
+              sx={{
+                borderRadius: '16px',
+                transition: 'all 0.3s ease-in-out',
+                border: '1px solid',
+                borderColor: 'divider',
+                '&:hover': {
+                  transform: 'translateY(-4px)',
+                  boxShadow: '0px 12px 24px rgba(0, 0, 0, 0.05)',
+                },
+              }}
+            >
+              <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+                <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: { xs: 1, sm: 2 } }}>
+                  <Checkbox
+                    checked={task.completed}
+                    onChange={() => toggleComplete(task.id)}
+                    icon={<UncheckedIcon />}
+                    checkedIcon={<CheckCircleIcon />}
+                    sx={{
+                      color: 'text.secondary',
+                      '&.Mui-checked': {
+                        color: 'success.main',
+                      },
+                      '&:hover': {
+                        backgroundColor: 'rgba(16, 185, 129, 0.04)',
+                      },
+                      p: { xs: '4px', sm: '8px' },
                     }}
-                  >
-                    <Checkbox
-                      checked={task.completed}
-                      onChange={() => toggleComplete(task.id)}
-                      icon={<UncheckedIcon />}
-                      checkedIcon={<CheckCircleIcon />}
-                      sx={{ p: 0.5, mr: 1.5, mt: 0.5 }}
-                    />
-                    <Box sx={{ flex: 1 }}>
-                      <Typography 
-                        variant="h6" 
-                        sx={{ 
-                          lineHeight: 1.4,
-                          mb: 0.5,
+                  />
+                  <Box sx={{ flex: 1, minWidth: 0 }}>
+                    <Box sx={{ 
+                      display: 'flex', 
+                      alignItems: { xs: 'flex-start', sm: 'center' },
+                      flexDirection: { xs: 'column', sm: 'row' },  
+                      gap: { xs: 0.5, sm: 1 }, 
+                      mb: 1,
+                      flexWrap: 'wrap'
+                    }}>
+                      <Typography
+                        variant="h6"
+                        sx={{
                           fontWeight: 600,
                           textDecoration: task.completed ? 'line-through' : 'none',
-                          color: task.completed ? theme.palette.text.secondary : theme.palette.text.primary,
+                          color: task.completed ? 'text.secondary' : 'text.primary',
+                          fontSize: { xs: '1rem', sm: '1.25rem' },
+                          lineHeight: 1.3,
+                          mr: { xs: 0, sm: 1 },
                         }}
                       >
                         {task.title}
                       </Typography>
-                      
-                      {task.description && (
-                        <Typography 
-                          variant="body2" 
-                          color="text.secondary"
-                          sx={{ 
-                            mb: 2,
-                            display: '-webkit-box',
-                            overflow: 'hidden',
-                            WebkitBoxOrient: 'vertical',
-                            WebkitLineClamp: 2,
-                          }}
-                        >
-                          {task.description}
+                      <Chip
+                        label={getBoardName(task.board)}
+                        size="small"
+                        sx={{
+                          backgroundColor: `${getBoardColor(task.board)}20`,
+                          color: getBoardColor(task.board),
+                          fontWeight: 500,
+                          height: 24,
+                          alignSelf: { xs: 'flex-start', sm: 'center' },
+                        }}
+                      />
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 2 }, flexWrap: 'wrap' }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        {task.priority && priorityIcons[task.priority]}
+                        <Typography variant="body2" color="text.secondary">
+                          {task.priority ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1) : 'None'}
                         </Typography>
-                      )}
-                    </Box>
-                    <Box sx={{ display: 'flex', gap: 0.5 }}>
-                      <Tooltip title="Edit Task">
-                        <IconButton
-                          size="small"
-                          onClick={() => navigate(`/task/edit/${task.id}`)}
-                          sx={{ color: theme.palette.text.secondary }}
-                        >
-                          <EditIcon fontSize="small" />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Delete Task">
-                        <IconButton
-                          size="small"
-                          onClick={() => dispatch(deleteTask(task.id))}
-                          sx={{ color: theme.palette.text.secondary }}
-                        >
-                          <DeleteIcon fontSize="small" />
-                        </IconButton>
-                      </Tooltip>
-                    </Box>
-                  </Box>
-
-                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2 }}>
-                    <Chip
-                      size="small"
-                      icon={priorityIcons[task.priority]}
-                      label={task.priority}
-                      sx={{ 
-                        borderRadius: '6px',
-                        fontWeight: 500,
-                        textTransform: 'capitalize',
-                      }}
-                    />
-                    <Chip
-                      size="small"
-                      icon={<DashboardIcon fontSize="small" />}
-                      label={getBoardName(task.board)}
-                      sx={{ 
-                        borderRadius: '6px',
-                        backgroundColor: `${theme.palette[getBoardColor(task.board)].main}20`,
-                        color: theme.palette[getBoardColor(task.board)].main,
-                        fontWeight: 500,
-                      }}
-                    />
-                  </Box>
-                  
-                  <Divider sx={{ my: 1.5 }} />
-                  
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      </Box>
                       {task.dueDate && (
-                        <Tooltip title="Due Date">
-                          <Box sx={{ display: 'flex', alignItems: 'center', mr: 2 }}>
-                            <CalendarIcon
-                              fontSize="small"
-                              sx={{ 
-                                mr: 0.5, 
-                                color: new Date(task.dueDate) < new Date() && !task.completed
-                                  ? theme.palette.error.main
-                                  : theme.palette.text.secondary
-                              }}
-                            />
-                            <Typography 
-                              variant="caption" 
-                              sx={{ 
-                                color: new Date(task.dueDate) < new Date() && !task.completed
-                                  ? theme.palette.error.main
-                                  : theme.palette.text.secondary,
-                                fontWeight: 500,
-                              }}
-                            >
-                              {format(new Date(task.dueDate), 'MMM d')}
-                            </Typography>
-                          </Box>
-                        </Tooltip>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <CalendarIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
+                          <Typography variant="body2" color="text.secondary">
+                            {format(parseISO(task.dueDate), 'MMM d, yyyy')}
+                          </Typography>
+                        </Box>
                       )}
-                    </Box>
-                    
-                    {task.subtasks?.length > 0 && (
-                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', mr: 1 }}>
-                          <Typography 
-                            variant="caption" 
-                            sx={{ 
-                              fontWeight: 500, 
-                              color: theme.palette.text.secondary
-                            }}
-                          >
+                      {task.subtasks?.length > 0 && (
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <DateRangeIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
+                          <Typography variant="body2" color="text.secondary">
                             {getCompletedSubtasksCount(task.subtasks)}
                           </Typography>
                         </Box>
-                        <IconButton
-                          size="small"
-                          onClick={() => toggleTaskExpansion(task.id)}
-                          sx={{ color: theme.palette.text.secondary }}
-                        >
-                          {expandedTasks.includes(task.id) ? (
-                            <ExpandLessIcon fontSize="small" />
-                          ) : (
-                            <ExpandMoreIcon fontSize="small" />
-                          )}
-                        </IconButton>
+                      )}
+                    </Box>
+                    {task.subtasks?.length > 0 && (
+                      <Box sx={{ mt: 2 }}>
+                        <LinearProgress
+                          variant="determinate"
+                          value={calculateProgress(task.subtasks)}
+                          sx={{
+                            height: 6,
+                            borderRadius: 3,
+                            backgroundColor: 'rgba(0, 0, 0, 0.05)',
+                            '& .MuiLinearProgress-bar': {
+                              borderRadius: 3,
+                            },
+                          }}
+                        />
                       </Box>
                     )}
                   </Box>
-                  
+                  <Box sx={{ 
+                    display: 'flex', 
+                    gap: { xs: 0.5, sm: 1 },
+                    flexDirection: { xs: 'column', sm: 'row' },
+                  }}>
+                    <IconButton
+                      size="small"
+                      onClick={() => navigate(`/task/edit/${task.id}`)}
+                      sx={{
+                        color: 'text.secondary',
+                        transition: 'all 0.2s ease-in-out',
+                        '&:hover': {
+                          color: 'primary.main',
+                          backgroundColor: 'rgba(37, 99, 235, 0.04)',
+                        },
+                      }}
+                    >
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton
+                      size="small"
+                      onClick={() => dispatch(deleteTask(task.id))}
+                      sx={{
+                        color: 'text.secondary',
+                        transition: 'all 0.2s ease-in-out',
+                        '&:hover': {
+                          color: 'error.main',
+                          backgroundColor: 'rgba(239, 68, 68, 0.04)',
+                        },
+                      }}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                    <IconButton
+                      size="small"
+                      onClick={() => toggleTaskExpansion(task.id)}
+                      sx={{
+                        color: 'text.secondary',
+                        transition: 'all 0.2s ease-in-out',
+                        transform: expandedTasks.includes(task.id) ? 'rotate(180deg)' : 'none',
+                        '&:hover': {
+                          backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                        },
+                      }}
+                    >
+                      <ExpandMoreIcon />
+                    </IconButton>
+                  </Box>
+                </Box>
+              </CardContent>
+              <Collapse in={expandedTasks.includes(task.id)}>
+                <Box sx={{ px: { xs: 2, sm: 3 }, pb: { xs: 2, sm: 3 } }}>
+                  <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                    {task.description || 'No description provided'}
+                  </Typography>
                   {task.subtasks?.length > 0 && (
-                    <>
-                      <LinearProgress
-                        variant="determinate"
-                        value={calculateProgress(task.subtasks)}
-                        sx={{ 
-                          mt: 1.5, 
-                          mb: 0.5, 
-                          height: 4,
-                          borderRadius: 2,
-                          backgroundColor: 'rgba(0,0,0,0.05)',
-                        }}
-                      />
-                      
-                      <Collapse in={expandedTasks.includes(task.id)}>
-                        <List sx={{ mt: 1, py: 0 }}>
-                          {task.subtasks.map((subtask, index) => (
-                            <ListItem key={index} dense sx={{ px: 0, py: 0.5 }}>
-                              <ListItemIcon sx={{ minWidth: 36 }}>
-                                <Checkbox
-                                  edge="start"
-                                  checked={subtask.completed}
-                                  size="small"
-                                  onChange={() => {
-                                    const updatedSubtasks = [...task.subtasks];
-                                    updatedSubtasks[index] = {
-                                      ...subtask,
-                                      completed: !subtask.completed,
-                                    };
-                                    dispatch(
-                                      updateTask({
-                                        ...task,
-                                        subtasks: updatedSubtasks,
-                                      })
-                                    );
-                                  }}
-                                />
-                              </ListItemIcon>
-                              <ListItemText
-                                primary={subtask.title}
-                                primaryTypographyProps={{
-                                  fontSize: '0.875rem',
-                                  fontWeight: 400,
-                                  textDecoration: subtask.completed ? 'line-through' : 'none',
-                                  color: subtask.completed ? theme.palette.text.secondary : theme.palette.text.primary,
-                                }}
-                              />
-                            </ListItem>
-                          ))}
-                        </List>
-                      </Collapse>
-                    </>
+                    <List dense>
+                      {task.subtasks.map((subtask, index) => (
+                        <ListItem key={index} sx={{ px: 0 }}>
+                          <ListItemIcon sx={{ minWidth: 36 }}>
+                            <Checkbox
+                              checked={subtask.completed}
+                              onChange={() => {
+                                const updatedSubtasks = [...task.subtasks];
+                                updatedSubtasks[index] = {
+                                  ...subtask,
+                                  completed: !subtask.completed,
+                                };
+                                dispatch(updateTask({ id: task.id, subtasks: updatedSubtasks }));
+                              }}
+                              size="small"
+                              sx={{
+                                color: 'text.secondary',
+                                '&.Mui-checked': {
+                                  color: 'success.main',
+                                },
+                              }}
+                            />
+                          </ListItemIcon>
+                          <ListItemText
+                            primary={subtask.title}
+                            sx={{
+                              textDecoration: subtask.completed ? 'line-through' : 'none',
+                              color: subtask.completed ? 'text.secondary' : 'text.primary',
+                            }}
+                          />
+                        </ListItem>
+                      ))}
+                    </List>
                   )}
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-      )}
+                </Box>
+              </Collapse>
+            </Card>
+          </Grid>
+        )) : (
+          <Grid xs={12}>
+            <Paper
+              sx={{
+                p: { xs: 3, sm: 5 },
+                textAlign: 'center',
+                borderRadius: '16px',
+                backgroundColor: 'background.paper',
+                border: '1px dashed',
+                borderColor: 'divider',
+              }}
+            >
+              <Typography variant="h6" sx={{ mb: 1, color: 'text.secondary' }}>
+                No tasks found
+              </Typography>
+              <Typography color="text.secondary" sx={{ mb: 3 }}>
+                {filters.status !== 'all' || filters.board !== 'all' || filters.priority !== 'all' ? 
+                  'Try changing your filter settings to see more tasks.' : 
+                  'Start by creating your first task!'}
+              </Typography>
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={<AddIcon />}
+                onClick={() => navigate('/task/new')}
+              >
+                Create New Task
+              </Button>
+            </Paper>
+          </Grid>
+        )}
+      </Grid>
     </Box>
   );
 }

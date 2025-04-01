@@ -13,40 +13,54 @@ const theme = createTheme({
   palette: {
     mode: 'light',
     primary: {
-      main: '#6C63FF', // Vibrant purple
-      light: '#9D97FF',
-      dark: '#4B44B3',
+      main: '#2563EB', // Modern blue
+      light: '#60A5FA',
+      dark: '#1D4ED8',
       contrastText: '#fff',
     },
     secondary: {
-      main: '#FF6B6B', // Coral red
-      light: '#FF9C9C',
-      dark: '#C73E3E',
+      main: '#7C3AED', // Rich purple
+      light: '#A78BFA',
+      dark: '#5B21B6',
       contrastText: '#fff',
     },
     background: {
-      default: '#F4F6F8',
+      default: '#F8FAFC',
       paper: '#FFFFFF',
     },
     error: {
-      main: '#FF5252',
+      main: '#EF4444',
     },
     warning: {
-      main: '#FFB74D',
+      main: '#F59E0B',
     },
     info: {
-      main: '#4DABF5',
+      main: '#3B82F6',
     },
     success: {
-      main: '#66BB6A',
+      main: '#10B981',
     },
     text: {
-      primary: '#2D3748',
-      secondary: '#718096',
+      primary: '#1E293B',
+      secondary: '#64748B',
     },
   },
   typography: {
-    fontFamily: '"Poppins", "Roboto", "Helvetica", "Arial", sans-serif',
+    fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
+    h1: {
+      fontWeight: 700,
+      letterSpacing: '-0.02em',
+    },
+    h2: {
+      fontWeight: 700,
+      letterSpacing: '-0.01em',
+    },
+    h3: {
+      fontWeight: 600,
+    },
+    h4: {
+      fontWeight: 600,
+    },
     h5: {
       fontWeight: 600,
     },
@@ -56,6 +70,13 @@ const theme = createTheme({
     button: {
       textTransform: 'none',
       fontWeight: 500,
+      letterSpacing: '0.01em',
+    },
+    body1: {
+      lineHeight: 1.6,
+    },
+    body2: {
+      lineHeight: 1.6,
     },
   },
   shape: {
@@ -63,30 +84,30 @@ const theme = createTheme({
   },
   shadows: [
     'none',
+    '0px 1px 2px rgba(0, 0, 0, 0.05)',
     '0px 2px 4px rgba(0, 0, 0, 0.05)',
-    '0px 4px 6px rgba(0, 0, 0, 0.07)',
-    '0px 6px 8px rgba(0, 0, 0, 0.08)',
-    '0px 8px 12px rgba(0, 0, 0, 0.09)',
-    '0px 10px 14px rgba(0, 0, 0, 0.1)',
-    '0px 12px 16px rgba(0, 0, 0, 0.11)',
-    '0px 14px 18px rgba(0, 0, 0, 0.12)',
-    '0px 16px 24px rgba(0, 0, 0, 0.13)',
-    '0px 24px 32px rgba(0, 0, 0, 0.14)',
-    '0px 32px 40px rgba(0, 0, 0, 0.15)',
-    '0px 40px 48px rgba(0, 0, 0, 0.16)',
-    '0px 48px 56px rgba(0, 0, 0, 0.17)',
-    '0px 56px 64px rgba(0, 0, 0, 0.18)',
-    '0px 64px 72px rgba(0, 0, 0, 0.19)',
-    '0px 72px 80px rgba(0, 0, 0, 0.2)',
-    '0px 80px 88px rgba(0, 0, 0, 0.21)',
-    '0px 88px 96px rgba(0, 0, 0, 0.22)',
-    '0px 96px 104px rgba(0, 0, 0, 0.23)',
-    '0px 104px 112px rgba(0, 0, 0, 0.24)',
-    '0px 112px 120px rgba(0, 0, 0, 0.25)',
-    '0px 120px 128px rgba(0, 0, 0, 0.26)',
-    '0px 128px 136px rgba(0, 0, 0, 0.27)',
-    '0px 136px 144px rgba(0, 0, 0, 0.28)',
-    '0px 144px 152px rgba(0, 0, 0, 0.29)',
+    '0px 4px 6px rgba(0, 0, 0, 0.05)',
+    '0px 8px 12px rgba(0, 0, 0, 0.05)',
+    '0px 12px 16px rgba(0, 0, 0, 0.05)',
+    '0px 16px 24px rgba(0, 0, 0, 0.05)',
+    '0px 24px 32px rgba(0, 0, 0, 0.05)',
+    '0px 32px 40px rgba(0, 0, 0, 0.05)',
+    '0px 40px 48px rgba(0, 0, 0, 0.05)',
+    '0px 48px 56px rgba(0, 0, 0, 0.05)',
+    '0px 56px 64px rgba(0, 0, 0, 0.05)',
+    '0px 64px 72px rgba(0, 0, 0, 0.05)',
+    '0px 72px 80px rgba(0, 0, 0, 0.05)',
+    '0px 80px 88px rgba(0, 0, 0, 0.05)',
+    '0px 88px 96px rgba(0, 0, 0, 0.05)',
+    '0px 96px 104px rgba(0, 0, 0, 0.05)',
+    '0px 104px 112px rgba(0, 0, 0, 0.05)',
+    '0px 112px 120px rgba(0, 0, 0, 0.05)',
+    '0px 120px 128px rgba(0, 0, 0, 0.05)',
+    '0px 128px 136px rgba(0, 0, 0, 0.05)',
+    '0px 136px 144px rgba(0, 0, 0, 0.05)',
+    '0px 144px 152px rgba(0, 0, 0, 0.05)',
+    '0px 152px 160px rgba(0, 0, 0, 0.05)',
+    '0px 160px 168px rgba(0, 0, 0, 0.05)',
   ],
   components: {
     MuiButton: {
@@ -94,11 +115,21 @@ const theme = createTheme({
         root: {
           borderRadius: 8,
           padding: '8px 16px',
-          boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
+          transition: 'all 0.2s ease-in-out',
+          '&:hover': {
+            transform: 'translateY(-1px)',
+          },
         },
         contained: {
+          boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
           '&:hover': {
             boxShadow: '0px 6px 12px rgba(0, 0, 0, 0.15)',
+          },
+        },
+        outlined: {
+          borderWidth: '1.5px',
+          '&:hover': {
+            borderWidth: '1.5px',
           },
         },
       },
@@ -107,11 +138,11 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: 16,
-          boxShadow: '0px 8px 16px rgba(0, 0, 0, 0.08)',
-          transition: 'transform 0.2s, box-shadow 0.2s',
+          boxShadow: '0px 8px 16px rgba(0, 0, 0, 0.05)',
+          transition: 'all 0.3s ease-in-out',
           '&:hover': {
             transform: 'translateY(-4px)',
-            boxShadow: '0px 12px 20px rgba(0, 0, 0, 0.12)',
+            boxShadow: '0px 12px 24px rgba(0, 0, 0, 0.08)',
           },
         },
       },
@@ -121,14 +152,42 @@ const theme = createTheme({
         root: {
           borderRadius: 8,
           fontWeight: 500,
+          height: 28,
+          '& .MuiChip-label': {
+            px: 1.5,
+          },
         },
       },
     },
     MuiDrawer: {
       styleOverrides: {
         paper: {
-          backgroundColor: '#2D3748',
+          backgroundColor: '#1E293B',
           color: '#FFFFFF',
+          borderRight: 'none',
+          boxShadow: '4px 0 16px rgba(0, 0, 0, 0.1)',
+        },
+      },
+    },
+    MuiAppBar: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#FFFFFF',
+          color: '#1E293B',
+          boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.05)',
+          borderBottom: '1px solid rgba(0, 0, 0, 0.05)',
+        },
+      },
+    },
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          '& .MuiOutlinedInput-root': {
+            borderRadius: 8,
+            '&:hover fieldset': {
+              borderColor: 'rgba(0, 0, 0, 0.23)',
+            },
+          },
         },
       },
     },
